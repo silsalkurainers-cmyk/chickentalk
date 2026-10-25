@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChickenTalk</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #080b08;
+      color: #e8f5e9;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    aside {
+      width: 230px;
+      background: #101810;
+      padding: 24px 16px;
+    }
+
+    h1 { color: #39d353; font-size: 25px; }
+    .channel { padding: 10px; color: #a8b5a8; }
+    main { flex: 1; display: flex; flex-direction: column; }
+    header { padding: 20px; border-bottom: 1px solid #263126; }
+    #messages { flex: 1; padding: 20px; overflow-y: auto; }
+    form { display: flex; padding: 16px; gap: 10px; }
+
+    input {
+      flex: 1;
+      padding: 14px;
+      background: #172117;
+      color: white;
+      border: 1px solid #304530;
+      border-radius: 8px;
+    }
+
+    button {
+      background: #238636;
+      color: white;
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <h1>🐔 ChickenTalk</h1>
+    <p>YOUR SERVER</p>
+    <div class="channel"># general</div>
+    <div class="channel"># gaming</div>
+    <div class="channel"># memes</div>
+  </aside>
+
+  <main>
+    <header><strong># general</strong></header>
+    <div id="messages">
+      <p>Welcome to ChickenTalk! Your chat starts here.</p>
+    </div>
+    <form id="chat">
+      <input id="message" placeholder="Message #general..." autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('chat');
+    const input = document.getElementById('message');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      const message = document.createElement('p');
+      message.textContent = 'You: ' + text;
+      messages.appendChild(message);
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
