@@ -1,9 +1,9 @@
-
 name: Build ChickenTalk Portable
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -14,27 +14,51 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+
+      - name: Verify project files
+        shell: pwsh
+        run: |
+          if (!(Test-Path "main.js")) {
+            throw "main.js is missing."
+          }
+          if (!(Test-Path "index.html")) {
+            throw "index.html is missing."
+          }
+          if (!(Test-Path "package.json")) {
+            throw "package.json is missing."
+          }
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build portable EXE
-        run: npx electron-builder --win portable --x64 --publish never
+      - name: Build portable executable
+        run: npm run build:windows
 
-      - name: Show output files
+      - name: Verify portable executable
         shell: pwsh
-        run: Get-ChildItem dist -Recurse
+        run: |
+          $exe = Get-ChildItem "dist" -Filter "ChickenTalk-Portable-*.exe" |
+            Select-Object -First 1
 
-      - name: Upload portable EXE
+          if (!$exe) {
+            Get-ChildItem "dist" -Recurse
+            throw "Portable EXE was not produced. No installer will be uploaded."
+          }
+
+          Write-Host "Portable executable found: $($exe.FullName)"
+
+      - name: Upload portable executable
         uses: actions/upload-artifact@v4
         with:
           name: ChickenTalk-Portable-Windows
-          path: dist/*.exe
+          path: dist/ChickenTalk-Portable-*.exe
           if-no-files-found: error
+          retention-days: 14
