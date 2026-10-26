@@ -1,3 +1,4 @@
+
 name: Build ChickenTalk Portable
 
 on:
@@ -25,21 +26,41 @@ jobs:
       - name: Verify project files
         shell: pwsh
         run: |
-          if (!(Test-Path "main.js")) {
-            throw "main.js is missing."
-          }
-          if (!(Test-Path "index.html")) {
-            throw "index.html is missing."
-          }
-          if (!(Test-Path "package.json")) {
-            throw "package.json is missing."
+          $requiredFiles = @("main.js", "index.html", "package.json")
+
+          foreach ($file in $requiredFiles) {
+            if (!(Test-Path $file)) {
+              throw "Required file is missing: $file"
+            }
           }
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build portable executable
-        run: npm run build:windows
+      - name: Build portable executable with retries
+        shell: pwsh
+        run: |
+          $success = $false
+
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            Write-Host "Build attempt $attempt of 3"
+
+            npm run build:windows
+
+            if ($LASTEXITCODE -eq 0) {
+              $success = $true
+              break
+            }
+
+            if ($attempt -lt 3) {
+              Write-Host "Build failed. Retrying in 15 seconds..."
+              Start-Sleep -Seconds 15
+            }
+          }
+
+          if (!$success) {
+            throw "Build failed after 3 attempts."
+          }
 
       - name: Verify portable executable
         shell: pwsh
@@ -48,11 +69,10 @@ jobs:
             Select-Object -First 1
 
           if (!$exe) {
-            Get-ChildItem "dist" -Recurse
-            throw "Portable EXE was not produced. No installer will be uploaded."
+            throw "Portable EXE was not produced."
           }
 
-          Write-Host "Portable executable found: $($exe.FullName)"
+          Write-Host "Created: $($exe.FullName)"
 
       - name: Upload portable executable
         uses: actions/upload-artifact@v4
