@@ -4,56 +4,60 @@ const path = require("node:path");
 const fs = require("node:fs");
 
 let mainWindow;
-let logPath;
+let logFile;
 
-function initializeLogging() {
-  try {
-    const portableDir = process.env.PORTABLE_EXECUTABLE_DIR;
+function log(message) {
+  const line = `[${new Date().toISOString()}] ${message}`;
 
-    // Prefer the portable folder when Electron's portable launcher
-    // supplies it. Otherwise, use the normal per-user app data folder.
-    const dataDir = portableDir
-      ? path.join(portableDir, "ChickenTalkData")
-      : path.join(app.getPath("appData"), "ChickenTalk");
+  console.log(line);
 
-    fs.mkdirSync(dataDir, { recursive: true });
-    logPath = path.join(dataDir, "startup.log");
-
-    // Keep userData consistent with the selected data directory.
-    app.setPath("userData", dataDir);
-    writeLog("Logging initialized.");
-  } catch (error) {
-    console.error("Could not initialize ChickenTalk logging:", error);
-  }
-}
-
-function writeLog(message) {
-  const line = `[${new Date().toISOString()}] ${message}\n`;
-  console.log(line.trim());
-
-  if (logPath) {
+  if (logFile) {
     try {
-      fs.appendFileSync(logPath, line, "utf8");
-    } catch (error) {
-      console.error("Could not write startup log:", error);
-    }
+      fs.appendFileSync(logFile, line + "\n", "utf8");
+    } catch {}
   }
 }
 
-function showStartupError(message) {
-  writeLog(message);
+function initializeApp() {
+  // Keep app data in the user's writable AppData directory.
+  // This works for portable EXEs and normal installations.
+  const dataDir = path.join(app.getPath("appData"), "ChickenTalk");
+
+  try {
+    fs.mkdirSync(dataDir, { recursive: true });
+    logFile = path.join(dataDir, "startup.log");
+    app.setPath("userData", dataDir);
+  } catch (error) {
+    console.error("Could not initialize app data:", error);
+  }
+}
+
+function showError(title, message) {
+  log(`${title}: ${message}`);
 
   dialog.showMessageBox({
     type: "error",
-    title: "ChickenTalk could not start",
-    message: "ChickenTalk ran into a startup problem.",
-    detail: `${message}\n\nA diagnostic log may be available in ChickenTalkData or the ChickenTalk user data folder.`,
+    title,
+    message,
+    detail: message,
     buttons: ["OK"]
   });
 }
 
 function createWindow() {
-  writeLog("Creating main window.");
+  const indexPath = path.join(app.getAppPath(), "index.html");
+
+  log(`App path: ${app.getAppPath()}`);
+  log(`Index path: ${indexPath}`);
+  log(`Index exists: ${fs.existsSync(indexPath)}`);
+
+  if (!fs.existsSync(indexPath)) {
+    showError(
+      "ChickenTalk could not start",
+      `The interface file is missing:\n${indexPath}\n\nPlease download a fresh copy of ChickenTalk.`
+    );
+    return;
+  }
 
   mainWindow = new BrowserWindow({
     width: 1100,
@@ -73,32 +77,27 @@ function createWindow() {
 
   mainWindow.webContents.on(
     "did-fail-load",
-    (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
-      if (!isMainFrame) return;
+    (_event, code, description, url, isMainFrame) => {
+      if (!isMainFrame || code === -3) return;
 
-      writeLog(
-        `Page load failed: ${errorCode} ${errorDescription}; URL=${validatedURL}`
-      );
+      log(`Load failure ${code}: ${description}; URL=${url}`);
 
-      if (!mainWindow || mainWindow.isDestroyed()) return;
-
-      dialog.showMessageBox(mainWindow, {
-        type: "error",
-        title: "ChickenTalk page failed to load",
-        message: "ChickenTalk could not load its interface.",
-        detail: `${errorDescription}\n\nPlease check the application files and try again.`,
-        buttons: ["OK"]
-      });
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        showError(
+          "ChickenTalk could not load",
+          `${description}\n\nPlease try downloading ChickenTalk again.`
+        );
+      }
     }
   );
 
   mainWindow.webContents.on("render-process-gone", (_event, details) => {
-    writeLog(`Renderer exited: ${JSON.stringify(details)}`);
+    log(`Renderer stopped: ${JSON.stringify(details)}`);
   });
 
   mainWindow.webContents.on("console-message", (_event, details) => {
     if (details.level >= 2) {
-      writeLog(`Renderer error: ${details.message}`);
+      log(`Interface error: ${details.message}`);
     }
   });
 
@@ -106,29 +105,31 @@ function createWindow() {
     mainWindow = null;
   });
 
-  const indexPath = path.join(__dirname, "index.html");
-  writeLog(`Loading interface from: ${indexPath}`);
-
   mainWindow.loadFile(indexPath).catch((error) => {
-    showStartupError(`Could not load index.html: ${error.stack || error}`);
+    showError(
+      "ChickenTalk could not open its interface",
+      error.stack || error.message || String(error)
+    );
   });
+
+  mainWindow.show();
 }
 
 process.on("uncaughtException", (error) => {
-  writeLog(`Uncaught exception: ${error.stack || error}`);
+  log(`Uncaught exception: ${error.stack || error}`);
 
   if (app.isReady()) {
-    showStartupError(error.message);
+    showError("ChickenTalk encountered an error", error.message);
   }
 });
 
 process.on("unhandledRejection", (error) => {
-  writeLog(`Unhandled rejection: ${error?.stack || String(error)}`);
+  log(`Unhandled rejection: ${error?.stack || String(error)}`);
 });
 
 app.whenReady().then(() => {
-  initializeLogging();
-  writeLog(`ChickenTalk starting. Electron ${process.versions.electron}`);
+  initializeApp();
+  log(`Starting ChickenTalk; Electron ${process.versions.electron}`);
 
   createWindow();
 
@@ -138,18 +139,11 @@ app.whenReady().then(() => {
     }
   });
 }).catch((error) => {
-  initializeLogging();
-  writeLog(`Application startup failed: ${error.stack || error}`);
-
-  if (app.isReady()) {
-    showStartupError(error.message);
-  } else {
-    dialog.showErrorBox(
-      "ChickenTalk startup error",
-      error.stack || String(error)
-    );
-    app.quit();
-  }
+  dialog.showErrorBox(
+    "ChickenTalk startup failed",
+    error.stack || String(error)
+  );
+  app.quit();
 });
 
 app.on("window-all-closed", () => {
