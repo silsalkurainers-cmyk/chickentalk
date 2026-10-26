@@ -11,16 +11,7 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: windows-latest
-            artifact: ChickenTalk-Windows
-          - os: ubuntu-latest
-            artifact: ChickenTalk-Linux
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - name: Get source code
@@ -34,12 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build desktop app
-        run: npx electron-builder --publish never
+      - name: Build ChickenTalk
+        run: npx electron-builder --win nsis --publish never
 
-      - name: Save app files
+      - name: Upload Windows app
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: dist/*
+          name: ChickenTalk-Windows
+          path: dist/*.exe
           if-no-files-found: error
