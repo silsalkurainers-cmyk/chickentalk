@@ -1,0 +1,45 @@
+
+name: Build ChickenTalk
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: ChickenTalk-Windows
+          - os: ubuntu-latest
+            artifact: ChickenTalk-Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build desktop app
+        run: npx electron-builder --publish never
+
+      - name: Save app files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/*
+          if-no-files-found: error
