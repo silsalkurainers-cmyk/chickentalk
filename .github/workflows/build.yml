@@ -26,25 +26,22 @@ jobs:
       - name: Verify project files
         shell: pwsh
         run: |
-          $requiredFiles = @("main.js", "index.html", "package.json")
-
-          foreach ($file in $requiredFiles) {
+          foreach ($file in @("main.js", "index.html", "package.json")) {
             if (!(Test-Path $file)) {
-              throw "Required file is missing: $file"
+              throw "Missing required file: $file"
             }
           }
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build portable executable with retries
+      - name: Build portable EXE
         shell: pwsh
         run: |
           $success = $false
 
           for ($attempt = 1; $attempt -le 3; $attempt++) {
             Write-Host "Build attempt $attempt of 3"
-
             npm run build:windows
 
             if ($LASTEXITCODE -eq 0) {
@@ -53,31 +50,35 @@ jobs:
             }
 
             if ($attempt -lt 3) {
-              Write-Host "Build failed. Retrying in 15 seconds..."
               Start-Sleep -Seconds 15
             }
           }
 
           if (!$success) {
-            throw "Build failed after 3 attempts."
+            throw "Portable EXE build failed after 3 attempts."
           }
 
-      - name: Verify portable executable
+      - name: Verify EXE
         shell: pwsh
         run: |
           $exe = Get-ChildItem "dist" -Filter "ChickenTalk-Portable-*.exe" |
             Select-Object -First 1
 
           if (!$exe) {
-            throw "Portable EXE was not produced."
+            throw "No portable EXE was created."
           }
 
-          Write-Host "Created: $($exe.FullName)"
+          if ($exe.Length -lt 1000000) {
+            throw "The EXE is unexpectedly small."
+          }
 
-      - name: Upload portable executable
+          Write-Host "Verified $($exe.Name), $($exe.Length) bytes."
+
+      - name: Upload portable EXE
         uses: actions/upload-artifact@v4
         with:
           name: ChickenTalk-Portable-Windows
           path: dist/ChickenTalk-Portable-*.exe
           if-no-files-found: error
+          compression-level: 0
           retention-days: 14
