@@ -25,12 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build ChickenTalk
-        run: npx electron-builder --win nsis --publish never
+      - name: Build portable ChickenTalk
+        run: npx electron-builder --win portable --publish never
 
-      - name: Upload Windows app
+      - name: Upload portable app
         uses: actions/upload-artifact@v4
         with:
-          name: ChickenTalk-Windows
-          path: dist/*.exe
+          name: ChickenTalk-Portable-Windows
+          path: dist/*-portable.exe
           if-no-files-found: error
