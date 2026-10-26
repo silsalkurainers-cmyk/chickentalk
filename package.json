@@ -6,6 +6,38 @@
   "main": "main.js",
   "author": "ChickenTalk",
   "license": "MIT",
+{
+  "name": "chickentalk",
+  "version": "1.0.0",
+  "description": "ChickenTalk desktop chat",
+  "main": "main.js",
+  "author": "ChickenTalk",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.chickentalk.desktop",
+    "productName": "ChickenTalk",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable"
+    }
+  }
+}
+
   "scripts": {
     "start": "electron .",
     "build": "electron-builder"
