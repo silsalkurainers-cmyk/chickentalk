@@ -577,13 +577,16 @@ $('signup').addEventListener('submit', async event => {
   }
 
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { username }
-      }
-    });
+    
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    data: { username },
+    emailRedirectTo: 'chickentalk://auth/callback'
+  }
+});
+
     if (error) throw error;
 
     if (data.session && data.user) {
