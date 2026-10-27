@@ -1,644 +1,1129 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChickenTalk</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #080b09;
-      --panel: #101612;
-      --panel2: #151e18;
-      --green: #238636;
-      --green2: #2ea043;
-      --text: #f0f6fc;
-      --muted: #8b949e;
-      --border: #26352a;
-      --danger: #ff7b72;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font: 14px Arial, sans-serif;
-    }
-
-    button, input, textarea { font: inherit; }
-
-    button {
-      cursor: pointer;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel2);
-      color: var(--text);
-      padding: 10px 14px;
-    }
-
-    button:hover { border-color: var(--green2); }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-
-    input, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #080b09;
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-    }
-
-    input:focus, textarea:focus { border-color: var(--green2); }
-
-    .primary {
-      background: var(--green);
-      border-color: var(--green);
-      font-weight: 700;
-    }
-
-    .primary:hover { background: var(--green2); }
-
-    .hidden { display: none !important; }
-
-    #authScreen {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 410px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 30px;
-      box-shadow: 0 20px 80px #0008;
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .brand-icon {
-      width: 58px;
-      height: 58px;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 12px;
-      border-radius: 17px;
-      background: #173c24;
-      font-size: 30px;
-    }
-
-    h1 { margin: 0 0 8px; font-size: 26px; }
-    h2 { font-size: 20px; margin: 0 0 18px; }
-    p { color: var(--muted); line-height: 1.5; }
-
-    .field { margin: 14px 0; }
-    .field label {
-      display: block;
-      margin-bottom: 7px;
-      color: #c9d1d9;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-    .actions button { flex: 1; }
-
-    #message {
-      margin-top: 16px;
-      padding: 11px;
-      border-radius: 8px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    #message:empty { display: none; }
-    #message.info { background: #14271a; color: #9be9a8; }
-    #message.error { background: #321919; color: var(--danger); }
-
-    #appScreen {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 76px 220px minmax(0, 1fr);
-    }
-
-    .server-rail {
-      background: #070907;
-      border-right: 1px solid var(--border);
-      padding: 14px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .server-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      display: grid;
-      place-items: center;
-      background: var(--panel2);
-      font-weight: 800;
-    }
-
-    .server-icon.active { background: var(--green); }
-
-    .sidebar {
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .sidebar-header {
-      padding: 20px 16px;
-      font-weight: bold;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .channel {
-      margin: 5px 9px;
-      padding: 11px;
-      color: var(--muted);
-      border-radius: 7px;
-    }
-
-    .channel.active {
-      color: var(--text);
-      background: #1b3020;
-    }
-
-    .account {
-      margin-top: auto;
-      padding: 12px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 9px;
-      align-items: center;
-      min-width: 0;
-    }
-
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--green);
-      display: grid;
-      place-items: center;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .account-info { min-width: 0; flex: 1; }
-    .account-info strong {
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .muted { color: var(--muted); }
-
-    .chat {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .chat-header {
-      height: 65px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      font-weight: bold;
-    }
-
-    #chatMessages {
-      flex: 1;
-      padding: 22px;
-    }
-
-    .welcome {
-      margin: auto;
-      max-width: 600px;
-      padding: 40px 10px;
-    }
-
-    .composer { padding: 16px 20px 22px; }
-    .composer-row { display: flex; gap: 10px; }
-    .composer-row input { flex: 1; min-width: 0; }
-
-    .profile-panel {
-      width: 100%;
-      max-width: 560px;
-      margin: 35px auto;
-      padding: 24px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-    }
-
-    @media (max-width: 700px) {
-      #appScreen { grid-template-columns: 58px minmax(0, 1fr); }
-      .server-rail { padding: 10px 5px; }
-      .server-icon { width: 42px; height: 42px; }
-      .sidebar { display: none; }
-      .chat-header { padding: 0 12px; }
-      #chatMessages { padding: 12px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ChickenTalk</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #080b08;
+  --panel: #111811;
+  --panel2: #172217;
+  --line: #2b392b;
+  --green: #67c66b;
+  --muted: #9cab9c;
+  --text: #edf4ed;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 system-ui, Segoe UI, sans-serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: wait; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+button {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #1a261a;
+  color: var(--text);
+  padding: 10px 13px;
+  font-weight: 650;
+}
+.primary { background: var(--green); border-color: var(--green); color: #071007; }
+.link { border: 0; background: none; color: #9ce3a0; text-decoration: underline; padding: 0; }
+input, textarea {
+  width: 100%;
+  padding: 11px 12px;
+  background: #090e09;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  outline: none;
+}
+input:focus, textarea:focus { border-color: var(--green); }
+label { display: block; margin: 13px 0 6px; color: #c8d5c8; font-size: 13px; }
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: radial-gradient(ellipse at 15% 10%, #17351b, transparent 45%), var(--bg);
+}
+.authbox {
+  width: min(100%, 430px);
+  background: #111811;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 28px;
+}
+.brand { display: flex; gap: 12px; align-items: center; font-size: 25px; font-weight: 850; margin-bottom: 20px; }
+.logo {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7de081, #286d32);
+  color: #071007;
+  border-radius: 13px;
+  width: 44px;
+  height: 44px;
+  font-weight: 900;
+}
+.notice { margin: 14px 0; padding: 11px; border: 1px solid var(--line); border-radius: 10px; overflow-wrap: anywhere; font-size: 13px; }
+.error { color: #ffbaba; background: #251111; border-color: #6b3030; }
+.success { color: #c5f4c7; background: #102010; border-color: #315d35; }
+.full { width: 100%; margin-top: 18px; }
+.links { display: flex; justify-content: space-between; gap: 12px; margin-top: 17px; }
+.app { height: 100vh; min-height: 560px; display: grid; grid-template-columns: 64px 230px minmax(0,1fr); }
+.rail {
+  display: flex; align-items: center; flex-direction: column; gap: 11px;
+  padding: 13px 8px; background: #070a07; border-right: 1px solid #202b20;
+}
+.rail button, .rail .logo { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border-radius: 14px; }
+.rail .spacer { flex: 1; }
+.sidebar { background: var(--panel); border-right: 1px solid #202b20; display: flex; flex-direction: column; min-width: 0; }
+.sidehead { padding: 18px 14px; border-bottom: 1px solid #202b20; }
+.sidehead h2 { margin: 0 0 4px; }
+.actions { display: flex; gap: 7px; margin-top: 13px; }
+.actions button { font-size: 12px; padding: 8px; flex: 1; }
+.section { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 13px 12px 5px; }
+.list { padding: 4px 8px; overflow: auto; flex: 1; }
+.item { display: flex; align-items: center; gap: 9px; text-align: left; width: 100%; background: transparent; border-color: transparent; padding: 9px; margin: 2px 0; }
+.item:hover, .item.active { background: var(--panel2); border-color: #344c34; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
+.bottom { border-top: 1px solid #202b20; padding: 12px; display: flex; align-items: center; gap: 9px; }
+.avatar { width: 38px; height: 38px; border-radius: 12px; background: #254a29; display: grid; place-items: center; color: #c9f6cb; font-weight: 800; overflow: hidden; flex: none; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.userlabel { flex: 1; min-width: 0; }
+.userlabel b, .userlabel small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.userlabel small { color: var(--muted); }
+.main { display: flex; flex-direction: column; min-width: 0; background: radial-gradient(ellipse at top right, #142016, transparent 42%), #0b100b; }
+.top { height: 62px; flex: none; border-bottom: 1px solid #202b20; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; gap: 12px; }
+.top h2 { font-size: 17px; margin: 0; }
+.content { padding: 22px; overflow: auto; flex: 1; }
+.empty { height: 100%; min-height: 280px; display: grid; place-items: center; text-align: center; color: var(--muted); }
+.card { background: #111811; border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 15px; }
+.grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 15px; }
+.row { display: flex; gap: 12px; align-items: center; }
+.row > * { min-width: 0; }
+.fieldrow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.result { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-top: 9px; }
+.grow { flex: 1; min-width: 0; }
+.result small { display: block; color: var(--muted); }
+.searchrow { display: flex; gap: 8px; }
+.searchrow input { flex: 1; min-width: 0; }
+.chat { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+.messages { flex: 1; overflow: auto; padding: 18px; display: flex; flex-direction: column; gap: 13px; }
+.message { display: flex; gap: 10px; }
+.messagebody { min-width: 0; }
+.meta { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+.msgtext { white-space: pre-wrap; overflow-wrap: anywhere; }
+.composer { display: flex; gap: 9px; padding: 13px 18px; border-top: 1px solid #202b20; align-items: flex-end; }
+.composer textarea { min-height: 44px; max-height: 130px; flex: 1; }
+.modalback { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; padding: 20px; z-index: 5; }
+.modal { width: min(100%, 430px); background: #111811; border: 1px solid #3a4d3a; border-radius: 17px; padding: 22px; }
+.modalhead { display: flex; justify-content: space-between; align-items: center; }
+.modalhead h2 { margin: 0; }
+@media(max-width:800px) {
+  .app { grid-template-columns: 54px 185px minmax(0,1fr); }
+  .content { padding: 12px; }
+  .grid { grid-template-columns: 1fr; }
+}
+@media(max-width:600px) {
+  .app { grid-template-columns: 52px minmax(0,1fr); }
+  .sidebar { display: none; }
+  .fieldrow { grid-template-columns: 1fr; }
+  .top { padding: 0 12px; }
+  .content { padding: 10px; }
+}
+</style>
 </head>
 <body>
-  <section id="authScreen">
-    <div class="auth-card">
-      <div class="brand">
-        <div class="brand-icon">🐔</div>
-        <h1>ChickenTalk</h1>
-        <p>Your corner of the internet.</p>
+<section id="auth" class="auth">
+  <div class="authbox">
+    <div class="brand"><div class="logo">C</div>ChickenTalk</div>
+    <h1 id="authTitle">Welcome back</h1>
+    <p id="authSubtitle" class="muted">Sign in to your account.</p>
+    <div id="authNotice" class="notice hidden" role="status" aria-live="polite"></div>
+    <form id="authForm">
+      <div id="usernameWrap" class="hidden">
+        <label for="username">Username</label>
+        <input id="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" placeholder="forest_chicken">
       </div>
-
-      <div id="authForms">
-        <div id="loginForm">
-          <h2>Welcome back</h2>
-          <div class="field">
-            <label for="loginEmail">Email</label>
-            <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com">
-          </div>
-          <div class="field">
-            <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Your password">
-          </div>
-          <div class="actions">
-            <button id="loginButton" class="primary">Log in</button>
-            <button id="showSignup">Create account</button>
-          </div>
-          <div class="actions">
-            <button id="forgotButton">Forgot password?</button>
-          </div>
-        </div>
-
-        <div id="signupForm" class="hidden">
-          <h2>Create your account</h2>
-          <div class="field">
-            <label for="signupUsername">Username</label>
-            <input id="signupUsername" maxlength="24" autocomplete="username" placeholder="chicken123">
-          </div>
-          <div class="field">
-            <label for="signupEmail">Email</label>
-            <input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com">
-          </div>
-          <div class="field">
-            <label for="signupPassword">Password</label>
-            <input id="signupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters">
-          </div>
-          <div class="actions">
-            <button id="signupButton" class="primary">Sign up</button>
-            <button id="showLogin">Back to login</button>
-          </div>
-        </div>
-
-        <div id="resetForm" class="hidden">
-          <h2>Reset password</h2>
-          <p>We'll email you a password reset link.</p>
-          <div class="field">
-            <label for="resetEmail">Email</label>
-            <input id="resetEmail" type="email" autocomplete="email" placeholder="you@example.com">
-          </div>
-          <div class="actions">
-            <button id="resetButton" class="primary">Send reset email</button>
-            <button id="resetBack">Back</button>
-          </div>
-        </div>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+      <div id="passwordWrap">
+        <label for="password">Password</label>
+        <input id="password" type="password" minlength="8" required autocomplete="current-password" placeholder="At least 8 characters">
       </div>
-
-      <div id="message" role="status" aria-live="polite"></div>
+      <button id="authSubmit" class="primary full" type="submit">Sign in</button>
+    </form>
+    <div class="links">
+      <button id="switchAuth" class="link" type="button">Create an account</button>
+      <button id="forgot" class="link" type="button">Forgot password?</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="appScreen" class="hidden">
-    <aside class="server-rail">
-      <div class="server-icon active" title="ChickenTalk">🐔</div>
-      <div class="server-icon" title="Servers">+</div>
-    </aside>
-
-    <aside class="sidebar">
-      <div class="sidebar-header">ChickenTalk</div>
-      <div class="channel active"># general</div>
-      <div class="channel"># memes</div>
-      <div class="account">
-        <div class="avatar" id="smallAvatar">C</div>
-        <div class="account-info">
-          <strong id="smallUsername">User</strong>
-          <span class="muted">Online</span>
-        </div>
-        <button id="profileButton" title="Profile">⚙</button>
-      </div>
-    </aside>
-
-    <main class="chat">
-      <header class="chat-header"># general <span class="muted" style="margin-left:12px;font-weight:normal">ChickenTalk</span></header>
-      <div id="chatMessages">
-        <div class="welcome">
-          <h1>Welcome to ChickenTalk</h1>
-          <p>Your account is signed in.</p>
-          <p>Chat messages, servers, direct messages and groups still need their database and interface wiring before they will work.</p>
-        </div>
-      </div>
-      <div class="composer">
-        <div class="composer-row">
-          <input id="messageInput" placeholder="Messaging isn't connected yet" disabled>
-          <button disabled>Send</button>
-        </div>
-      </div>
-    </main>
-  </section>
-
-  <section id="profileScreen" class="hidden">
-    <div class="profile-panel">
-      <h1>Your profile</h1>
-      <p>Edit the information shown on your ChickenTalk account.</p>
-      <div class="field">
-        <label for="profileUsername">Username</label>
-        <input id="profileUsername" maxlength="24">
-      </div>
-      <div class="field">
-        <label for="profileDisplayName">Display name</label>
-        <input id="profileDisplayName" maxlength="50">
-      </div>
-      <div class="field">
-        <label for="profileBio">Bio</label>
-        <textarea id="profileBio" rows="4" maxlength="190"></textarea>
-      </div>
+<section id="app" class="app hidden">
+  <nav class="rail">
+    <div class="logo">C</div>
+    <button data-page="home" title="Home">⌂</button>
+    <button data-page="discover" title="Find people">⌕</button>
+    <button data-page="profile" title="Profile">◎</button>
+    <div class="spacer"></div>
+    <button id="logout" title="Sign out">↪</button>
+  </nav>
+  <aside class="sidebar">
+    <div class="sidehead">
+      <h2 id="sideTitle">Messages</h2>
+      <div class="small muted" id="sideSub">Your ChickenTalk space</div>
       <div class="actions">
-        <button id="saveProfile" class="primary">Save profile</button>
-        <button id="backToChat">Back</button>
-        <button id="logoutButton">Log out</button>
+        <button id="newMessage">+ Message</button>
+        <button id="newServer">+ Server</button>
       </div>
-      <div id="profileMessage" role="status" aria-live="polite"></div>
     </div>
-  </section>
+    <div class="section" id="listTitle">Conversations</div>
+    <div id="sideList" class="list"></div>
+    <div class="bottom">
+      <div id="miniAvatar" class="avatar">C</div>
+      <div class="userlabel">
+        <b id="miniName">Chicken</b>
+        <small id="miniUsername">@chicken</small>
+      </div>
+      <button id="editProfile" title="Edit profile">⚙</button>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <h2 id="pageTitle">Welcome to ChickenTalk</h2>
+      <button id="findPeople">Find people</button>
+    </header>
+    <div id="content" class="content">
+      <div class="empty">
+        <div>
+          <h2>Welcome to ChickenTalk</h2>
+          <p>Set up your profile and find people to chat with.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+<div id="modalHost"></div>
 
-  <script type="module">
-    import { createClient } from
-      'https://esm.sh/@supabase/supabase-js@2';
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    const SUPABASE_URL = 'https://emxsxlkekskmubvyfgag.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
+const supabase = createClient(
+  'https://emxsxlkekskmubvyfgag.supabase.co',
+  'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN',
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const S = {
+  user: null,
+  profile: null,
+  mode: 'login',
+  page: 'home',
+  conversations: [],
+  servers: [],
+  conversation: null,
+  realtime: null,
+  messages: []
+};
 
-    const $ = id => document.getElementById(id);
-    let currentUser = null;
+const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[char]));
 
-    function showMessage(text, type = 'info') {
-      const el = $('message');
-      el.textContent = text;
-      el.className = type;
+const initials = value => (String(value || 'C').trim()[0] || 'C').toUpperCase();
+
+function notice(id, message = '', type = '') {
+  const element = $(id);
+  element.textContent = message;
+  element.className = 'notice' + (message ? '' : ' hidden') + (type ? ' ' + type : '');
+}
+
+function showAuth(mode = 'login', message = '', type = '') {
+  S.mode = mode;
+  $('auth').classList.remove('hidden');
+  $('app').classList.add('hidden');
+
+  $('authTitle').textContent =
+    mode === 'signup' ? 'Create your account' :
+    mode === 'reset' ? 'Reset your password' : 'Welcome back';
+
+  $('authSubtitle').textContent =
+    mode === 'signup' ? 'Make your ChickenTalk account.' :
+    mode === 'reset' ? 'We will email you a reset link.' :
+    'Sign in to your account.';
+
+  $('usernameWrap').classList.toggle('hidden', mode !== 'signup');
+  $('passwordWrap').classList.toggle('hidden', mode === 'reset');
+  $('password').required = mode !== 'reset';
+  $('password').autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
+
+  $('authSubmit').textContent =
+    mode === 'signup' ? 'Create account' :
+    mode === 'reset' ? 'Send reset email' : 'Sign in';
+
+  $('switchAuth').textContent =
+    mode === 'signup' ? 'Already have an account? Sign in' : 'Create an account';
+
+  $('switchAuth').classList.toggle('hidden', mode === 'reset');
+  $('forgot').classList.toggle('hidden', mode !== 'login');
+
+  notice('authNotice', message, type);
+}
+
+function badge() {
+  const profile = S.profile || {};
+  const name = profile.display_name || profile.username ||
+    S.user?.email?.split('@')[0] || 'Chicken';
+
+  $('miniName').textContent = name;
+  $('miniUsername').textContent = '@' + (profile.username || 'user');
+  $('miniAvatar').textContent = initials(name);
+
+  if (profile.avatar_url) {
+    $('miniAvatar').innerHTML = `<img alt="" src="${esc(profile.avatar_url)}">`;
+  }
+}
+
+async function profileFor(user) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id,username,display_name,bio,avatar_url')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    throw Error('Could not load profile: ' + error.message);
+  }
+
+  if (!data) {
+    let username = (
+      user.user_metadata?.username ||
+      user.email?.split('@')[0] ||
+      'chicken'
+    ).toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 24);
+
+    if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+      username = 'user_' + user.id.slice(0, 8);
     }
 
-    function showProfileMessage(text, type = 'info') {
-      const el = $('profileMessage');
-      el.textContent = text;
-      el.className = type;
+    const result = await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        username,
+        display_name: username,
+        bio: ''
+      })
+      .select('id,username,display_name,bio,avatar_url')
+      .single();
+
+    if (result.error) {
+      throw Error('Account exists but profile setup failed: ' + result.error.message);
     }
 
-    function showAuthForm(name) {
-      $('loginForm').classList.toggle('hidden', name !== 'login');
-      $('signupForm').classList.toggle('hidden', name !== 'signup');
-      $('resetForm').classList.toggle('hidden', name !== 'reset');
-      showMessage('');
-    }
+    S.profile = result.data;
+  } else {
+    S.profile = data;
+  }
 
-    function showScreen(name) {
-      $('authScreen').classList.toggle('hidden', name !== 'auth');
-      $('appScreen').classList.toggle('hidden', name !== 'app');
-      $('profileScreen').classList.toggle('hidden', name !== 'profile');
-    }
+  badge();
+}
 
-    function friendlyError(error) {
-      const msg = error?.message || 'Something went wrong.';
-      if (/invalid.*credentials/i.test(msg)) return 'Email or password is incorrect.';
-      if (/expired|invalid.*token|token.*invalid/i.test(msg)) {
-        return 'This email link is invalid or expired. Request a new email and open the newest link once.';
+async function enter(user) {
+  S.user = user;
+
+  try {
+    await profileFor(user);
+    $('auth').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    await loadSidebar();
+    home();
+  } catch (error) {
+    showAuth('login', error.message, 'error');
+  }
+}
+
+$('authForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  $('authSubmit').disabled = true;
+  notice('authNotice');
+
+  try {
+    const email = $('email').value.trim();
+    const password = $('password').value;
+    const username = $('username').value.trim().toLowerCase();
+
+    if (S.mode === 'signup') {
+      if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+        throw Error('Username must be 3–24 letters, numbers, or underscores.');
       }
-      if (/already registered/i.test(msg)) return 'An account with this email already exists.';
-      return msg;
-    }
 
-    async function loadProfile(user) {
-      currentUser = user;
-      const fallback = user.user_metadata?.username || user.email?.split('@')[0] || 'Chicken';
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('username, display_name, bio')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (error) console.error('Profile load:', error.message);
-
-      const username = data?.username || fallback;
-      const displayName = data?.display_name || username;
-
-      $('smallUsername').textContent = displayName;
-      $('smallAvatar').textContent = (displayName[0] || 'C').toUpperCase();
-      $('profileUsername').value = username;
-      $('profileDisplayName').value = data?.display_name || '';
-      $('profileBio').value = data?.bio || '';
-
-      showScreen('app');
-    }
-
-    async function finishAuth() {
-      /*
-       * Supabase email links for desktop apps need a matching callback.
-       * This page cannot receive localhost redirects unless a local server
-       * is running. It also cannot automatically intercept a browser link.
-       * We deliberately do not treat a redirect URL as proof of login.
-       */
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error) {
-        showScreen('auth');
-        showAuthForm('login');
-        showMessage(friendlyError(error), 'error');
-        return;
+      if (password.length < 8) {
+        throw Error('Password must contain at least 8 characters.');
       }
 
-      if (data.session?.user) {
-        await loadProfile(data.session.user);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { username } }
+      });
+
+      if (error) throw error;
+
+      if (data.session && data.user) {
+        await enter(data.user);
       } else {
-        showScreen('auth');
-        showAuthForm('login');
+        showAuth(
+          'login',
+          'Account created. Check your email and open the newest confirmation link. Then return here and sign in.',
+          'success'
+        );
+        $('email').value = email;
+        $('password').value = '';
+      }
+    } else if (S.mode === 'reset') {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+
+      showAuth(
+        'login',
+        'If this email belongs to an account, a reset email has been sent. A configured reset page is required to finish resetting the password.',
+        'success'
+      );
+    } else {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+      await enter(data.user);
+    }
+  } catch (error) {
+    notice('authNotice', error.message || 'Request failed.', 'error');
+  } finally {
+    $('authSubmit').disabled = false;
+
+    $('authSubmit').textContent =
+      S.mode === 'signup' ? 'Create account' :
+      S.mode === 'reset' ? 'Send reset email' : 'Sign in';
+  }
+});
+
+$('switchAuth').onclick = () =>
+  showAuth(S.mode === 'signup' ? 'login' : 'signup');
+
+$('forgot').onclick = () => showAuth('reset');
+
+$('logout').onclick = async () => {
+  await cleanup();
+  await supabase.auth.signOut();
+  S.user = null;
+  S.profile = null;
+  showAuth('login', 'Signed out.', 'success');
+};
+
+document.querySelectorAll('[data-page]').forEach(button => {
+  button.onclick = () => page(button.dataset.page);
+});
+
+$('editProfile').onclick = () => page('profile');
+$('findPeople').onclick = () => page('discover');
+$('newMessage').onclick = () => page('discover');
+$('newServer').onclick = createServerModal;
+
+function page(name) {
+  S.page = name;
+  S.conversation = null;
+
+  document.querySelectorAll('[data-page]').forEach(button => {
+    button.classList.toggle('active', button.dataset.page === name);
+  });
+
+  if (name === 'profile') profilePage();
+  else if (name === 'discover') discoverPage();
+  else home();
+}
+
+function home() {
+  S.page = 'home';
+  $('pageTitle').textContent = S.conversation?.name || 'Welcome to ChickenTalk';
+  $('sideTitle').textContent = 'Messages';
+  $('sideSub').textContent = 'Your ChickenTalk space';
+  $('listTitle').textContent = 'Conversations';
+
+  if (S.conversation) {
+    conversationPage();
+    return;
+  }
+
+  $('content').innerHTML = `
+    <div class="empty">
+      <div>
+        <h2>Welcome to ChickenTalk</h2>
+        <p>Find people, set up your profile, and start a conversation.</p>
+        <button class="primary" id="homeFind">Find people</button>
+      </div>
+    </div>`;
+
+  $('homeFind').onclick = () => page('discover');
+}
+
+async function loadSidebar() {
+  if (!S.user) return;
+
+  const list = $('sideList');
+  list.innerHTML = '<p class="small muted">Loading…</p>';
+
+  const { data: memberships, error } = await supabase
+    .from('conversation_members')
+    .select('conversation_id')
+    .eq('user_id', S.user.id);
+
+  S.conversations = [];
+
+  if (error) {
+    list.innerHTML = '<p class="small muted">Conversations need database access policies.</p>';
+  } else {
+    const ids = [...new Set((memberships || []).map(item => item.conversation_id))];
+
+    if (!ids.length) {
+      list.innerHTML = '<p class="small muted">No conversations yet. Find someone to message.</p>';
+    } else {
+      const result = await supabase
+        .from('conversations')
+        .select('id,kind,name,created_by,created_at')
+        .in('id', ids)
+        .order('created_at', { ascending: false });
+
+      if (result.error) {
+        list.innerHTML = `<p class="small muted">${esc(result.error.message)}</p>`;
+      } else {
+        S.conversations = result.data || [];
+        list.innerHTML = S.conversations.map(conversation => `
+          <button class="item" data-conv="${esc(conversation.id)}">
+            <span class="dot"></span>${esc(conversation.name || 'Direct message')}
+          </button>`).join('');
+
+        list.querySelectorAll('[data-conv]').forEach(button => {
+          button.onclick = () => openConversation(
+            S.conversations.find(item => item.id === button.dataset.conv)
+          );
+        });
+      }
+    }
+  }
+
+  const serverMemberships = await supabase
+    .from('server_members')
+    .select('server_id')
+    .eq('user_id', S.user.id);
+
+  if (!serverMemberships.error) {
+    const ids = [...new Set((serverMemberships.data || []).map(item => item.server_id))];
+
+    if (ids.length) {
+      const result = await supabase
+        .from('servers')
+        .select('id,name,owner_id,created_at')
+        .in('id', ids);
+
+      if (!result.error) {
+        S.servers = result.data || [];
+
+        const heading = document.createElement('div');
+        heading.className = 'section';
+        heading.textContent = 'Servers';
+        list.appendChild(heading);
+
+        S.servers.forEach(server => {
+          const button = document.createElement('button');
+          button.className = 'item';
+          button.textContent = '◈ ' + server.name;
+          button.onclick = () => openServer(server);
+          list.appendChild(button);
+        });
+      }
+    }
+  }
+}
+
+function profilePage() {
+  $('pageTitle').textContent = 'Your profile';
+  $('sideTitle').textContent = 'Account';
+  $('sideSub').textContent = 'Make it yours';
+
+  $('content').innerHTML = `
+    <div class="grid">
+      <section class="card">
+        <h2>Edit profile</h2>
+        <p class="muted small">Your public profile details.</p>
+        <div class="row" style="margin:18px 0">
+          <div class="avatar" id="avatarPreview" style="width:64px;height:64px">
+            ${esc(initials(S.profile?.display_name || S.profile?.username))}
+          </div>
+          <div>
+            <b id="previewName">${esc(S.profile?.display_name || S.profile?.username)}</b>
+            <div class="muted" id="previewUser">@${esc(S.profile?.username)}</div>
+          </div>
+        </div>
+        <form id="profileForm">
+          <div class="fieldrow">
+            <div>
+              <label>Username</label>
+              <input id="pUsername" required minlength="3" maxlength="24"
+                pattern="[A-Za-z0-9_]{3,24}" value="${esc(S.profile?.username)}">
+            </div>
+            <div>
+              <label>Display name</label>
+              <input id="pDisplay" required maxlength="40"
+                value="${esc(S.profile?.display_name || '')}">
+            </div>
+          </div>
+          <label>Bio</label>
+          <textarea id="pBio" maxlength="300">${esc(S.profile?.bio || '')}</textarea>
+          <label>Avatar image URL (optional)</label>
+          <input id="pAvatar" type="url" maxlength="500"
+            placeholder="https://example.com/avatar.gif"
+            value="${esc(S.profile?.avatar_url || '')}">
+          <p class="small muted">Direct GIF image URLs can animate. Image uploads need storage setup.</p>
+          <button class="primary" type="submit">Save profile</button>
+          <div id="profileNotice" class="notice hidden"></div>
+        </form>
+      </section>
+      <section class="card">
+        <h2>Account</h2>
+        <p class="muted small">Signed in as</p>
+        <p>${esc(S.user?.email)}</p>
+        <p class="muted small">Account ID</p>
+        <p class="small">${esc(S.user?.id)}</p>
+        <button id="profileLogout">Sign out</button>
+      </section>
+    </div>`;
+
+  $('pDisplay').oninput = () => {
+    $('previewName').textContent = $('pDisplay').value || $('pUsername').value;
+  };
+
+  $('pUsername').oninput = () => {
+    $('previewUser').textContent = '@' + $('pUsername').value.toLowerCase();
+  };
+
+  $('pAvatar').oninput = avatarPreview;
+  $('profileLogout').onclick = () => $('logout').click();
+  $('profileForm').onsubmit = saveProfile;
+  avatarPreview();
+}
+
+function avatarPreview() {
+  const url = $('pAvatar')?.value.trim();
+  const node = $('avatarPreview');
+  if (!node) return;
+
+  if (url && /^https?:\/\//i.test(url)) {
+    node.innerHTML = `<img alt="" src="${esc(url)}" onerror="this.remove()">`;
+  } else {
+    node.textContent = initials($('pDisplay')?.value || S.profile?.username);
+  }
+}
+
+async function saveProfile(event) {
+  event.preventDefault();
+
+  const username = $('pUsername').value.trim().toLowerCase();
+  const display_name = $('pDisplay').value.trim();
+  const bio = $('pBio').value.trim();
+  const avatar_url = $('pAvatar').value.trim() || null;
+
+  if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+    notice('profileNotice', 'Username must be 3–24 letters, numbers, or underscores.', 'error');
+    return;
+  }
+
+  const button = $('profileForm').querySelector('button[type=submit]');
+  button.disabled = true;
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ username, display_name, bio, avatar_url })
+      .eq('id', S.user.id)
+      .select('id,username,display_name,bio,avatar_url')
+      .single();
+
+    if (error) throw error;
+
+    S.profile = data;
+    badge();
+    notice('profileNotice', 'Profile saved.', 'success');
+  } catch (error) {
+    notice('profileNotice', 'Could not save profile: ' + error.message, 'error');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function discoverPage() {
+  $('pageTitle').textContent = 'Find people';
+  $('sideTitle').textContent = 'Discover';
+  $('sideSub').textContent = 'Find your next conversation';
+
+  $('content').innerHTML = `
+    <section class="card">
+      <h2>Find people</h2>
+      <p class="muted small">Search usernames or display names.</p>
+      <form id="searchForm" class="searchrow">
+        <input id="query" required minlength="2" maxlength="40" placeholder="Search people…">
+        <button class="primary">Search</button>
+      </form>
+      <div id="searchNotice" class="notice hidden"></div>
+      <div id="results"></div>
+    </section>`;
+
+  $('searchForm').onsubmit = searchPeople;
+}
+
+async function searchPeople(event) {
+  event.preventDefault();
+
+  const query = $('query').value.trim().replace(/[%_]/g, '');
+  $('results').textContent = 'Searching…';
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id,username,display_name,bio,avatar_url')
+    .or(`username.ilike.%${query}%,display_name.ilike.%${query}%`)
+    .neq('id', S.user.id)
+    .limit(25);
+
+  if (error) {
+    $('results').innerHTML = '';
+    notice('searchNotice', 'Search failed: ' + error.message, 'error');
+    return;
+  }
+
+  if (!data?.length) {
+    $('results').textContent = 'No matching people found.';
+    return;
+  }
+
+  $('results').innerHTML = data.map(profile => `
+    <div class="result">
+      <div class="avatar">
+        ${profile.avatar_url
+          ? `<img alt="" src="${esc(profile.avatar_url)}">`
+          : esc(initials(profile.display_name || profile.username))}
+      </div>
+      <div class="grow">
+        <b>${esc(profile.display_name || profile.username)}</b>
+        <small>@${esc(profile.username)} ${profile.bio ? '· ' + esc(profile.bio) : ''}</small>
+      </div>
+      <button class="primary" data-user="${esc(profile.id)}"
+        data-name="${esc(profile.display_name || profile.username)}">Message</button>
+    </div>`).join('');
+
+  $('results').querySelectorAll('[data-user]').forEach(button => {
+    button.onclick = () => createDM(button.dataset.user, button.dataset.name);
+  });
+}
+
+async function createDM(otherUserId, displayName) {
+  try {
+    const mine = await supabase
+      .from('conversation_members')
+      .select('conversation_id')
+      .eq('user_id', S.user.id);
+
+    if (mine.error) throw mine.error;
+
+    const ids = (mine.data || []).map(item => item.conversation_id);
+
+    if (ids.length) {
+      const shared = await supabase
+        .from('conversation_members')
+        .select('conversation_id')
+        .eq('user_id', otherUserId)
+        .in('conversation_id', ids);
+
+      if (shared.error) throw shared.error;
+
+      if (shared.data?.length) {
+        const existing = await supabase
+          .from('conversations')
+          .select('id,kind,name,created_by,created_at')
+          .in('id', shared.data.map(item => item.conversation_id))
+          .eq('kind', 'direct')
+          .limit(1)
+          .maybeSingle();
+
+        if (existing.data) {
+          await openConversation(existing.data);
+          return;
+        }
       }
     }
 
-    $('showSignup').addEventListener('click', () => showAuthForm('signup'));
-    $('showLogin').addEventListener('click', () => showAuthForm('login'));
-    $('forgotButton').addEventListener('click', () => {
-      $('resetEmail').value = $('loginEmail').value;
-      showAuthForm('reset');
-    });
-    $('resetBack').addEventListener('click', () => showAuthForm('login'));
+    const created = await supabase
+      .from('conversations')
+      .insert({
+        kind: 'direct',
+        name: displayName,
+        created_by: S.user.id
+      })
+      .select('id,kind,name,created_by,created_at')
+      .single();
 
-    $('loginButton').addEventListener('click', async () => {
-      const email = $('loginEmail').value.trim();
-      const password = $('loginPassword').value;
+    if (created.error) throw created.error;
 
-      if (!email || !password) return showMessage('Enter your email and password.', 'error');
+    const members = await supabase
+      .from('conversation_members')
+      .insert([
+        { conversation_id: created.data.id, user_id: S.user.id },
+        { conversation_id: created.data.id, user_id: otherUserId }
+      ]);
 
-      $('loginButton').disabled = true;
-      showMessage('Signing in…');
+    if (members.error) throw members.error;
 
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        await loadProfile(data.user);
-      } catch (error) {
-        showMessage(friendlyError(error), 'error');
-      } finally {
-        $('loginButton').disabled = false;
-      }
-    });
+    await loadSidebar();
+    await openConversation(created.data);
+  } catch (error) {
+    alert('Could not create DM: ' + error.message +
+      '\nThe database needs membership-aware policies before messaging works.');
+  }
+}
 
-    $('signupButton').addEventListener('click', async () => {
-      const username = $('signupUsername').value.trim().toLowerCase();
-      const email = $('signupEmail').value.trim();
-      const password = $('signupPassword').value;
+function createServerModal() {
+  $('modalHost').innerHTML = `
+    <div class="modalback">
+      <section class="modal">
+        <div class="modalhead"><h2>Create a server</h2><button id="closeModal">×</button></div>
+        <form id="serverForm">
+          <label>Server name</label>
+          <input id="serverName" required minlength="2" maxlength="60" placeholder="Forest Hangout">
+          <button class="primary full">Create server</button>
+          <div id="serverNotice" class="notice hidden"></div>
+        </form>
+      </section>
+    </div>`;
 
-      if (!/^[a-z0-9_]{3,24}$/.test(username)) {
-        return showMessage('Username must be 3–24 characters using letters, numbers or underscores.', 'error');
-      }
-      if (!email || password.length < 8) {
-        return showMessage('Enter a valid email and a password of at least 8 characters.', 'error');
-      }
+  $('closeModal').onclick = () => $('modalHost').innerHTML = '';
 
-      $('signupButton').disabled = true;
-      showMessage('Creating your account…');
+  $('serverForm').onsubmit = async event => {
+    event.preventDefault();
 
-      try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { username },
-            // This redirect is not sufficient for a desktop callback.
-            // A matching callback must be implemented in main.js.
-            emailRedirectTo: 'http://localhost:3000'
-          }
-        });
+    const result = await supabase
+      .from('servers')
+      .insert({ name: $('serverName').value.trim(), owner_id: S.user.id })
+      .select('id,name,owner_id,created_at')
+      .single();
 
-        if (error) throw error;
+    if (result.error) {
+      notice('serverNotice', result.error.message, 'error');
+      return;
+    }
 
-        if (data.session) {
-          await loadProfile(data.user);
-        } else {
-          showMessage('Account created. Check your email, then open the newest confirmation link. The desktop callback still needs to be configured.', 'info');
-          showAuthForm('login');
+    const membership = await supabase
+      .from('server_members')
+      .insert({ server_id: result.data.id, user_id: S.user.id, role: 'owner' });
+
+    if (membership.error) {
+      notice('serverNotice', 'Server created, but joining failed: ' + membership.error.message, 'error');
+      return;
+    }
+
+    $('modalHost').innerHTML = '';
+    await loadSidebar();
+    await openServer(result.data);
+  };
+}
+
+async function openServer(server) {
+  S.conversation = null;
+  await cleanup();
+
+  $('pageTitle').textContent = server.name;
+  $('sideTitle').textContent = 'Server';
+  $('sideSub').textContent = server.name;
+  $('listTitle').textContent = 'Channels';
+
+  const { data, error } = await supabase
+    .from('channels')
+    .select('id,server_id,name,created_at')
+    .eq('server_id', server.id)
+    .order('created_at');
+
+  if (error) {
+    $('content').innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+    return;
+  }
+
+  $('sideList').innerHTML = (data || []).map(channel => `
+    <button class="item" data-channel="${esc(channel.id)}"># ${esc(channel.name)}</button>`
+  ).join('') || '<p class="small muted">No channels yet.</p>';
+
+  $('sideList').querySelectorAll('[data-channel]').forEach(button => {
+    button.onclick = () => {
+      const channel = data.find(item => item.id === button.dataset.channel);
+      $('pageTitle').textContent = '#' + channel.name;
+      $('content').innerHTML = `
+        <div class="empty">
+          <div>
+            <h2>Channel selected</h2>
+            <p>Channel messaging needs a channel-to-conversation link in the database.</p>
+          </div>
+        </div>`;
+    };
+  });
+
+  $('content').innerHTML = `
+    <div class="empty">
+      <div>
+        <h2>${esc(server.name)}</h2>
+        <p>Select a channel or create one.</p>
+        <button id="createChannel">Create channel</button>
+      </div>
+    </div>`;
+
+  $('createChannel').onclick = () => createChannelModal(server);
+}
+
+function createChannelModal(server) {
+  $('modalHost').innerHTML = `
+    <div class="modalback">
+      <section class="modal">
+        <div class="modalhead"><h2>Create channel</h2><button id="closeModal">×</button></div>
+        <form id="channelForm">
+          <label>Channel name</label>
+          <input id="channelName" required minlength="2" maxlength="60"
+            pattern="[a-zA-Z0-9_-]+" placeholder="general">
+          <button class="primary full">Create channel</button>
+          <div id="channelNotice" class="notice hidden"></div>
+        </form>
+      </section>
+    </div>`;
+
+  $('closeModal').onclick = () => $('modalHost').innerHTML = '';
+
+  $('channelForm').onsubmit = async event => {
+    event.preventDefault();
+
+    const result = await supabase
+      .from('channels')
+      .insert({
+        server_id: server.id,
+        name: $('channelName').value.trim().toLowerCase()
+      })
+      .select('id,server_id,name,created_at')
+      .single();
+
+    if (result.error) {
+      notice('channelNotice', result.error.message, 'error');
+      return;
+    }
+
+    $('modalHost').innerHTML = '';
+    await openServer(server);
+  };
+}
+
+async function openConversation(conversation) {
+  S.conversation = conversation;
+  S.page = 'home';
+
+  await cleanup();
+  conversationPage();
+  await loadMessages();
+  subscribe();
+}
+
+function conversationPage() {
+  const conversation = S.conversation;
+
+  $('pageTitle').textContent = conversation?.name || 'Direct message';
+
+  $('content').innerHTML = `
+    <div class="chat">
+      <div id="messages" class="messages">
+        <div class="muted">Loading messages…</div>
+      </div>
+      <form id="composer" class="composer">
+        <textarea id="messageText" maxlength="4000" required placeholder="Write a message…"></textarea>
+        <button class="primary">Send</button>
+      </form>
+    </div>`;
+
+  $('composer').onsubmit = sendMessage;
+}
+
+async function loadMessages() {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('id,conversation_id,sender_id,content,created_at')
+    .eq('conversation_id', S.conversation.id)
+    .order('created_at', { ascending: true })
+    .limit(200);
+
+  if (error) {
+    $('messages').innerHTML =
+      `<div class="muted">Couldn't load messages: ${esc(error.message)}. Check messages RLS policies.</div>`;
+    return;
+  }
+
+  S.messages = data || [];
+  await renderMessages();
+}
+
+async function renderMessages() {
+  const node = $('messages');
+  if (!node) return;
+
+  if (!S.messages.length) {
+    node.innerHTML = '<div class="muted">No messages yet. Say hello.</div>';
+    return;
+  }
+
+  const ids = [...new Set(S.messages.map(message => message.sender_id))];
+
+  const result = await supabase
+    .from('profiles')
+    .select('id,username,display_name,avatar_url')
+    .in('id', ids);
+
+  const profiles = new Map((result.data || []).map(profile => [profile.id, profile]));
+
+  node.innerHTML = S.messages.map(message => {
+    const profile = profiles.get(message.sender_id) || {};
+    const name = profile.display_name || profile.username || 'User';
+
+    return `
+      <div class="message">
+        <div class="avatar">
+          ${profile.avatar_url
+            ? `<img alt="" src="${esc(profile.avatar_url)}">`
+            : esc(initials(name))}
+        </div>
+        <div class="messagebody">
+          <div class="meta">
+            <b>${esc(name)}</b> · ${esc(new Date(message.created_at).toLocaleString())}
+          </div>
+          <div class="msgtext">${esc(message.content)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  node.scrollTop = node.scrollHeight;
+}
+
+async function sendMessage(event) {
+  event.preventDefault();
+
+  const input = $('messageText');
+  const content = input.value.trim();
+  if (!content) return;
+
+  const button = $('composer').querySelector('button');
+  button.disabled = true;
+
+  const result = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: S.conversation.id,
+      sender_id: S.user.id,
+      content
+    })
+    .select('id,conversation_id,sender_id,content,created_at')
+    .single();
+
+  button.disabled = false;
+
+  if (result.error) {
+    alert('Could not send message: ' + result.error.message + '\nCheck messages RLS policies.');
+    return;
+  }
+
+  input.value = '';
+  S.messages.push(result.data);
+  await renderMessages();
+}
+
+function subscribe() {
+  if (!S.conversation) return;
+
+  const conversationId = S.conversation.id;
+
+  S.realtime = supabase
+    .channel('messages-' + conversationId)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: 'conversation_id=eq.' + conversationId
+      },
+      payload => {
+        if (
+          S.conversation?.id === conversationId &&
+          !S.messages.some(message => message.id === payload.new.id)
+        ) {
+          S.messages.push(payload.new);
+          renderMessages();
         }
-      } catch (error) {
-        showMessage(friendlyError(error), 'error');
-      } finally {
-        $('signupButton').disabled = false;
       }
-    });
+    )
+    .subscribe();
+}
 
-    $('resetButton').addEventListener('click', async () => {
-      const email = $('resetEmail').value.trim();
-      if (!email) return showMessage('Enter your email address.', 'error');
+async function cleanup() {
+  if (S.realtime) {
+    await supabase.removeChannel(S.realtime);
+    S.realtime = null;
+  }
+}
 
-      $('resetButton').disabled = true;
-      showMessage('Sending password reset email…');
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user && !S.user) {
+    queueMicrotask(() => enter(session.user));
+  }
 
-      try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'http://localhost:3000'
-        });
-        if (error) throw error;
-        showMessage('If the address is registered, a reset email will arrive. The callback page must be running to finish the reset.');
-      } catch (error) {
-        showMessage(friendlyError(error), 'error');
-      } finally {
-        $('resetButton').disabled = false;
-      }
-    });
+  if (!session && S.user) {
+    S.user = null;
+    S.profile = null;
+    showAuth('login');
+  }
+});
 
-    $('profileButton').addEventListener('click', () => {
-      showProfileMessage('');
-      showScreen('profile');
-    });
+const { data: { session } } = await supabase.auth.getSession();
 
-    $('backToChat').addEventListener('click', () => showScreen('app'));
-
-    $('saveProfile').addEventListener('click', async () => {
-      if (!currentUser) return;
-
-      const username = $('profileUsername').value.trim().toLowerCase();
-      const display_name = $('profileDisplayName').value.trim();
-      const bio = $('profileBio').value.trim();
-
-      if (!/^[a-z0-9_]{3,24}$/.test(username)) {
-        return showProfileMessage('Username must be 3–24 characters using letters, numbers or underscores.', 'error');
-      }
-
-      $('saveProfile').disabled = true;
-
-      try {
-        const { error } = await supabase.from('profiles').upsert({
-          id: currentUser.id,
-          username,
-          display_name: display_name || username,
-          bio
-        }, { onConflict: 'id' });
-
-        if (error) throw error;
-
-        $('smallUsername').textContent = display_name || username;
-        $('smallAvatar').textContent = (display_name || username)[0].toUpperCase();
-        showProfileMessage('Profile saved.');
-      } catch (error) {
-        showProfileMessage(friendlyError(error), 'error');
-      } finally {
-        $('saveProfile').disabled = false;
-      }
-    });
-
-    $('logoutButton').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        showProfileMessage(friendlyError(error), 'error');
-        return;
-      }
-      currentUser = null;
-      showScreen('auth');
-      showAuthForm('login');
-      showMessage('You have been logged out.');
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user && !currentUser) {
-        loadProfile(session.user);
-      }
-    });
-
-    await finishAuth();
-  </script>
+if (session?.user) {
+  await enter(session.user);
+} else {
+  showAuth('login');
+}
+</script>
 </body>
 </html>
