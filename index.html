@@ -3,18 +3,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ChickenTalk</title>
   <style>
     :root {
       color-scheme: dark;
       --bg: #080b09;
-      --panel: #101713;
-      --green: #1d7546;
-      --bright: #39b96f;
-      --text: #edf5ef;
-      --muted: #9aa99e;
-      --border: #26382c;
+      --panel: #111813;
+      --panel2: #18231b;
+      --green: #236c41;
+      --bright: #49c77b;
+      --text: #eef6ef;
+      --muted: #9ca99f;
+      --border: #2a3b2e;
+      --danger: #ffb9b9;
     }
 
     * { box-sizing: border-box; }
@@ -22,250 +24,459 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(ellipse at top, #102719, var(--bg) 65%);
+      background:
+        radial-gradient(ellipse at top, #163523 0%, transparent 50%),
+        var(--bg);
       color: var(--text);
       font: 15px Arial, sans-serif;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .center {
+      min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 22px;
     }
 
     .card {
-      width: min(100%, 420px);
-      background: rgba(16, 23, 19, .97);
+      width: min(100%, 440px);
+      padding: 28px;
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 30px;
-      box-shadow: 0 24px 80px #0009;
+      background: rgba(17, 24, 19, .97);
+      box-shadow: 0 24px 80px #0008;
     }
 
-    .brand {
-      text-align: center;
-      margin-bottom: 26px;
-    }
+    .brand { text-align: center; margin-bottom: 25px; }
 
     .logo {
       width: 58px;
       height: 58px;
+      margin: 0 auto 12px;
       display: grid;
       place-items: center;
-      margin: 0 auto 12px;
-      background: #17452c;
-      border: 1px solid #34764d;
       border-radius: 17px;
+      background: #17492c;
+      border: 1px solid #34784b;
       font-size: 29px;
     }
 
-    h1 { margin: 0; font-size: 28px; }
+    h1 { font-size: 28px; margin: 0; }
+    h2 { font-size: 20px; margin: 0 0 16px; }
+    h3 { font-size: 16px; margin: 0 0 12px; }
+    p { line-height: 1.5; }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; line-height: 1.5; }
     .subtitle { color: var(--muted); margin-top: 8px; }
 
     .tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
-      background: #080d09;
       padding: 5px;
+      background: #090e0a;
       border-radius: 10px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
 
-    button, input { font: inherit; }
-
-    .tabs button {
-      border: 0;
+    .tabs button, .secondary {
       padding: 11px;
-      color: var(--muted);
+      border: 1px solid transparent;
       background: transparent;
-      border-radius: 7px;
-      cursor: pointer;
+      color: var(--muted);
+      border-radius: 8px;
     }
 
     .tabs button.active {
+      background: var(--green);
       color: white;
-      background: #1d7546;
     }
 
     label {
       display: block;
+      margin: 14px 0 7px;
+      color: #cbd9cd;
       font-size: 13px;
-      color: #c9d7cc;
-      margin: 15px 0 7px;
     }
 
-    input {
+    input, textarea {
       width: 100%;
-      border: 1px solid var(--border);
+      padding: 12px;
       background: #090e0b;
       color: white;
+      border: 1px solid var(--border);
       border-radius: 9px;
-      padding: 12px;
       outline: none;
     }
 
-    input:focus { border-color: var(--bright); }
+    input:focus, textarea:focus { border-color: var(--bright); }
+    textarea { resize: vertical; min-height: 90px; }
 
     .primary {
       width: 100%;
-      border: 0;
-      background: var(--green);
-      color: white;
-      border-radius: 9px;
       padding: 13px;
-      margin-top: 22px;
-      cursor: pointer;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      background: var(--green);
       font-weight: bold;
     }
 
-    .primary:hover { background: #258b53; }
-    .primary:disabled { opacity: .6; cursor: wait; }
+    .primary:hover { background: #2b8750; }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .secondary {
+      border-color: var(--border);
+      background: var(--panel2);
+      color: var(--text);
+    }
 
     .status {
       display: none;
-      margin-top: 16px;
+      margin-top: 15px;
       padding: 12px;
       border-radius: 9px;
-      background: #19271e;
-      color: #d8f5df;
-      line-height: 1.45;
+      background: #183322;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+
+    .status.error { background: #391d1d; color: var(--danger); }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+    }
+
+    aside {
+      background: #0b100c;
+      border-right: 1px solid var(--border);
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .sidebrand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 6px;
+    }
+
+    .mini-logo {
+      background: #17492c;
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .navitem {
+      padding: 11px;
+      border-radius: 8px;
+      color: var(--muted);
       overflow-wrap: anywhere;
     }
 
-    .status.error { background: #351b1b; color: #ffcaca; }
-    .footnote {
-      color: var(--muted);
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.5;
-      margin-top: 22px;
+    .navitem.active { background: #193a25; color: white; }
+    .account { margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px; }
+    .account strong { display: block; overflow-wrap: anywhere; }
+
+    main { min-width: 0; padding: 30px; }
+    .content { width: min(100%, 700px); margin: 0 auto; }
+    .panel {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 23px;
+      border-radius: 14px;
+      margin-top: 18px;
     }
 
-    [hidden] { display: none !important; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .row > * { min-width: 0; }
+    .row input { flex: 1; }
+    .avatar {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: #1d4b2e;
+      font-size: 27px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 650px) {
+      .app { grid-template-columns: 1fr; }
+      aside { border-right: 0; border-bottom: 1px solid var(--border); }
+      .account { margin-top: 0; }
+      main { padding: 18px; }
+    }
   </style>
 </head>
 <body>
-  <main class="card">
-    <header class="brand">
-      <div class="logo">🐔</div>
-      <h1>ChickenTalk</h1>
-      <div class="subtitle">Your flock. Your conversations.</div>
-    </header>
+  <section id="authScreen" class="center">
+    <div class="card">
+      <header class="brand">
+        <div class="logo">🐔</div>
+        <h1>ChickenTalk</h1>
+        <div class="subtitle">Your flock. Your conversations.</div>
+      </header>
 
-    <div class="tabs">
-      <button id="loginTab" class="active" type="button">Log in</button>
-      <button id="signupTab" type="button">Create account</button>
-    </div>
-
-    <form id="authForm">
-      <div id="usernameField" hidden>
-        <label for="username">Username</label>
-        <input id="username" name="username"
-          minlength="3" maxlength="24"
-          pattern="[A-Za-z0-9_]{3,24}"
-          placeholder="Chicken username"
-          autocomplete="username">
+      <div class="tabs">
+        <button id="loginTab" class="active" type="button">Log in</button>
+        <button id="signupTab" type="button">Create account</button>
       </div>
 
-      <label for="email">Email address</label>
-      <input id="email" name="email" type="email"
-        placeholder="you@example.com"
-        autocomplete="email" required>
+      <form id="authForm">
+        <div id="usernameField" class="hidden">
+          <label for="username">Username</label>
+          <input id="username" autocomplete="username"
+            minlength="3" maxlength="24"
+            pattern="[A-Za-z0-9_]{3,24}"
+            placeholder="chicken_player">
+          <p class="small muted">3–24 letters, numbers, or underscores.</p>
+        </div>
 
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password"
-        minlength="8" placeholder="At least 8 characters"
-        autocomplete="current-password" required>
+        <label for="email">Email address</label>
+        <input id="email" type="email" autocomplete="email"
+          placeholder="you@example.com" required>
 
-      <button class="primary" id="submitButton" type="submit">
-        Log in
+        <label for="password">Password</label>
+        <input id="password" type="password"
+          autocomplete="current-password" minlength="8"
+          placeholder="At least 8 characters" required>
+
+        <button id="submitButton" class="primary" type="submit">
+          Log in
+        </button>
+      </form>
+
+      <button id="resetButton" class="secondary" type="button"
+        style="width:100%;margin-top:10px">
+        Reset password
       </button>
-    </form>
 
-    <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div id="authStatus" class="status" role="status"
+        aria-live="polite"></div>
 
-    <p class="footnote">
-      By creating an account, you agree to use ChickenTalk responsibly.
-      Keep your password private.
-    </p>
-  </main>
+      <p class="small muted">
+        Keep your password private. Use an email address you can access
+        to confirm your account and recover it if needed.
+      </p>
+    </div>
+  </section>
+
+  <section id="appScreen" class="app hidden">
+    <aside>
+      <div class="sidebrand"><span class="mini-logo">🐔</span> ChickenTalk</div>
+      <div class="navitem active">Your profile</div>
+      <div class="navitem">Direct messages</div>
+      <div class="navitem">Group chats</div>
+      <div class="navitem">Servers</div>
+
+      <div class="account">
+        <strong id="sideUsername">@username</strong>
+        <div class="small muted" id="sideEmail"></div>
+        <button id="logoutButton" class="secondary"
+          style="width:100%;margin-top:12px">Log out</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="content">
+        <h1>Your profile</h1>
+        <p class="muted">Manage your ChickenTalk identity.</p>
+
+        <section class="panel">
+          <div class="row">
+            <div class="avatar">🐔</div>
+            <div>
+              <h2 id="profileHeading">@username</h2>
+              <div class="muted small" id="profileEmail"></div>
+            </div>
+          </div>
+
+          <form id="profileForm">
+            <label for="editUsername">Username</label>
+            <input id="editUsername" minlength="3" maxlength="24"
+              pattern="[A-Za-z0-9_]{3,24}" required>
+
+            <label for="displayName">Display name</label>
+            <input id="displayName" maxlength="40"
+              placeholder="Your display name">
+
+            <label for="bio">About me</label>
+            <textarea id="bio" maxlength="300"
+              placeholder="Write something about yourself..."></textarea>
+
+            <button id="saveProfile" class="primary" type="submit">
+              Save profile
+            </button>
+          </form>
+
+          <div id="profileStatus" class="status" role="status"
+            aria-live="polite"></div>
+        </section>
+
+        <section class="panel">
+          <h3>Coming next</h3>
+          <p class="muted">
+            This version connects accounts and profiles. Real direct
+            messages, private groups, servers, channels, and live chat
+            still need their secure database operations.
+          </p>
+        </section>
+      </div>
+    </main>
+  </section>
 
   <script type="module">
     import { createClient } from
       'https://esm.sh/@supabase/supabase-js@2';
 
-    // Replace these two values with your Supabase project details.
-    const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
-    const SUPABASE_PUBLISHABLE_KEY = 'PASTE_YOUR_PUBLISHABLE_KEY_HERE';
+    const SUPABASE_URL =
+      'https://emxsxlkekskmubvyfgag.supabase.co';
 
-    const statusBox = document.querySelector('#status');
-    const form = document.querySelector('#authForm');
-    const usernameField = document.querySelector('#usernameField');
-    const usernameInput = document.querySelector('#username');
-    const emailInput = document.querySelector('#email');
-    const passwordInput = document.querySelector('#password');
-    const submitButton = document.querySelector('#submitButton');
-    const loginTab = document.querySelector('#loginTab');
-    const signupTab = document.querySelector('#signupTab');
+    const SUPABASE_PUBLISHABLE_KEY =
+      'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const $ = (id) => document.getElementById(id);
 
     let mode = 'login';
-    let supabase = null;
+    let currentUser = null;
 
-    function showStatus(message, error = false) {
-      statusBox.textContent = message;
-      statusBox.classList.toggle('error', error);
-      statusBox.style.display = 'block';
+    function status(id, message, isError = false) {
+      const box = $(id);
+      box.textContent = message;
+      box.classList.toggle('error', isError);
+      box.style.display = 'block';
+    }
+
+    function clearStatus(id) {
+      const box = $(id);
+      box.textContent = '';
+      box.style.display = 'none';
+      box.classList.remove('error');
     }
 
     function setMode(nextMode) {
       mode = nextMode;
       const signup = mode === 'signup';
-      loginTab.classList.toggle('active', !signup);
-      signupTab.classList.toggle('active', signup);
-      usernameField.hidden = !signup;
-      usernameInput.required = signup;
-      passwordInput.autocomplete = signup
+
+      $('loginTab').classList.toggle('active', !signup);
+      $('signupTab').classList.toggle('active', signup);
+      $('usernameField').classList.toggle('hidden', !signup);
+      $('username').required = signup;
+      $('password').autocomplete = signup
         ? 'new-password' : 'current-password';
-      submitButton.textContent = signup
+      $('submitButton').textContent = signup
         ? 'Create account' : 'Log in';
-      statusBox.style.display = 'none';
+
+      clearStatus('authStatus');
     }
 
-    loginTab.addEventListener('click', () => setMode('login'));
-    signupTab.addEventListener('click', () => setMode('signup'));
+    $('loginTab').addEventListener('click', () => setMode('login'));
+    $('signupTab').addEventListener('click', () => setMode('signup'));
 
-    if (
-      SUPABASE_URL.startsWith('https://') &&
-      !SUPABASE_URL.includes('PASTE_') &&
-      !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_')
-    ) {
-      supabase = createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+    function showAuth() {
+      $('authScreen').classList.remove('hidden');
+      $('appScreen').classList.add('hidden');
     }
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+    function showApp() {
+      $('authScreen').classList.add('hidden');
+      $('appScreen').classList.remove('hidden');
+    }
 
-      if (!supabase) {
-        showStatus(
-          'Add your Supabase Project URL and publishable key in index.html first.',
+    function friendlyError(error) {
+      const message = String(error?.message || '');
+
+      if (/duplicate key|profiles_username_key|unique constraint/i.test(message)) {
+        return 'Sorry some chicken has already taken this name';
+      }
+
+      if (/invalid login credentials/i.test(message)) {
+        return 'Email or password is incorrect.';
+      }
+
+      if (/email not confirmed/i.test(message)) {
+        return 'Please confirm your email before logging in.';
+      }
+
+      return message || 'Something went wrong. Please try again.';
+    }
+
+    async function loadProfile(user) {
+      currentUser = user;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, display_name, bio')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        showAuth();
+        status(
+          'authStatus',
+          'Could not load your profile: ' + friendlyError(error),
           true
         );
         return;
       }
 
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
+      if (!data) {
+        showAuth();
+        status(
+          'authStatus',
+          'Your profile is not available yet. If you just registered, check your email and confirm your account.',
+          true
+        );
+        return;
+      }
 
-      submitButton.disabled = true;
+      $('sideUsername').textContent = '@' + data.username;
+      $('sideEmail').textContent = user.email || '';
+      $('profileHeading').textContent = '@' + data.username;
+      $('profileEmail').textContent = user.email || '';
+      $('editUsername').value = data.username;
+      $('displayName').value = data.display_name || '';
+      $('bio').value = data.bio || '';
+
+      showApp();
+    }
+
+    $('authForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearStatus('authStatus');
+
+      const button = $('submitButton');
+      button.disabled = true;
 
       try {
-        if (mode === 'signup') {
-          const username = usernameInput.value.trim();
+        const email = $('email').value.trim();
+        const password = $('password').value;
 
-          if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) {
-            showStatus(
-              'Username must be 3–24 characters using letters, numbers, or underscores.',
+        if (mode === 'signup') {
+          const username = $('username').value.trim().toLowerCase();
+
+          if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+            status(
+              'authStatus',
+              'Username must be 3–24 letters, numbers, or underscores.',
               true
             );
             return;
@@ -273,38 +484,136 @@
 
           const { data, error } = await supabase.auth.signUp({
             email,
-            password
+            password,
+            options: {
+              data: { username }
+            }
           });
 
           if (error) throw error;
 
-          if (data.user && data.session) {
-            showStatus(
-              'Account created! Username registration still needs the secure backend function before your profile is saved.'
-            );
+          if (data.session && data.user) {
+            await loadProfile(data.user);
           } else {
-            showStatus(
-              'Check your email for the confirmation link. Username registration still needs the secure backend function.'
+            status(
+              'authStatus',
+              'Registration started! Check your email for the confirmation link. Your profile is created by the database trigger.'
             );
           }
         } else {
-          const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
+          const { data, error } =
+            await supabase.auth.signInWithPassword({
+              email,
+              password
+            });
 
           if (error) throw error;
-
-          showStatus(
-            'Logged in successfully. The chat interface and profile loading still need to be connected.'
-          );
+          await loadProfile(data.user);
         }
       } catch (error) {
-        showStatus(error.message || 'Something went wrong.', true);
+        status('authStatus', friendlyError(error), true);
       } finally {
-        submitButton.disabled = false;
+        button.disabled = false;
       }
     });
+
+    $('resetButton').addEventListener('click', async () => {
+      clearStatus('authStatus');
+      const email = $('email').value.trim();
+
+      if (!email) {
+        status(
+          'authStatus',
+          'Enter your email address first.',
+          true
+        );
+        return;
+      }
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+
+        status(
+          'authStatus',
+          'If password recovery is available for that address, you will receive an email with the next steps.'
+        );
+      } catch (error) {
+        status('authStatus', friendlyError(error), true);
+      }
+    });
+
+    $('profileForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!currentUser) return;
+
+      clearStatus('profileStatus');
+      $('saveProfile').disabled = true;
+
+      try {
+        const username = $('editUsername').value.trim().toLowerCase();
+        const displayName = $('displayName').value.trim();
+        const bio = $('bio').value.trim();
+
+        if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+          status(
+            'profileStatus',
+            'Username must be 3–24 letters, numbers, or underscores.',
+            true
+          );
+          return;
+        }
+
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            username,
+            display_name: displayName || username,
+            bio
+          })
+          .eq('id', currentUser.id);
+
+        if (error) throw error;
+
+        status('profileStatus', 'Profile saved.');
+        await loadProfile(currentUser);
+      } catch (error) {
+        status('profileStatus', friendlyError(error), true);
+      } finally {
+        $('saveProfile').disabled = false;
+      }
+    });
+
+    $('logoutButton').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        alert(friendlyError(error));
+        return;
+      }
+
+      currentUser = null;
+      showAuth();
+    });
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        currentUser = null;
+        showAuth();
+      }
+    });
+
+    const { data: { session }, error: sessionError } =
+      await supabase.auth.getSession();
+
+    if (sessionError) {
+      showAuth();
+      status('authStatus', friendlyError(sessionError), true);
+    } else if (session?.user) {
+      await loadProfile(session.user);
+    } else {
+      showAuth();
+    }
   </script>
 </body>
 </html>
