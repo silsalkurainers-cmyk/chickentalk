@@ -4,366 +4,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090b09">
   <title>ChickenTalk</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #090b09;
-      --panel: #101410;
-      --panel2: #151b15;
-      --panel3: #1b241b;
-      --green: #36c76b;
-      --green2: #239b4c;
-      --text: #edf3ed;
-      --muted: #8b978b;
-      --border: #263126;
-      --danger: #ef6464;
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      --bg: #080b09;
+      --panel: #101612;
+      --panel2: #151e18;
+      --green: #238636;
+      --green2: #2ea043;
+      --text: #f0f6fc;
+      --muted: #8b949e;
+      --border: #26352a;
+      --danger: #ff7b72;
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); }
-    button, input, textarea { font: inherit; }
-    button { cursor: pointer; }
-    button:focus-visible, input:focus-visible, textarea:focus-visible {
-      outline: 2px solid var(--green);
-      outline-offset: 2px;
-    }
-    button:disabled { opacity: .55; cursor: not-allowed; }
 
-    .hidden { display: none !important; }
-    .muted { color: var(--muted); }
-    .small { font-size: 12px; }
-    .green { color: var(--green); }
-    .full { width: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px Arial, sans-serif;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel2);
+      color: var(--text);
+      padding: 10px 14px;
+    }
+
+    button:hover { border-color: var(--green2); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #080b09;
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus { border-color: var(--green2); }
 
     .primary {
-      border: 0;
       background: var(--green);
-      color: #071008;
-      font-weight: 750;
-      border-radius: 8px;
-      padding: 11px 15px;
+      border-color: var(--green);
+      font-weight: 700;
     }
-    .primary:hover { background: #50df82; }
-    .secondary {
-      border: 1px solid var(--border);
-      color: var(--text);
-      background: var(--panel3);
-      border-radius: 8px;
-      padding: 10px 13px;
-    }
-    .secondary:hover { border-color: var(--green); }
-    .danger { color: var(--danger); }
 
-    /* Account screens */
+    .primary:hover { background: var(--green2); }
+
+    .hidden { display: none !important; }
+
     #authScreen {
       min-height: 100vh;
       display: grid;
       place-items: center;
       padding: 24px;
-      background:
-        radial-gradient(ellipse at 50% 15%, #16341e 0, transparent 48%),
-        var(--bg);
     }
+
     .auth-card {
-      width: min(100%, 420px);
+      width: 100%;
+      max-width: 410px;
+      background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 30px;
-      background: rgba(16, 20, 16, .97);
-      box-shadow: 0 24px 90px #0009;
+      box-shadow: 0 20px 80px #0008;
     }
+
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      text-align: center;
       margin-bottom: 25px;
     }
-    .brand-mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
+
+    .brand-icon {
+      width: 58px;
+      height: 58px;
       display: grid;
       place-items: center;
-      background: #183d23;
-      color: var(--green);
-      font-size: 24px;
-      font-weight: 900;
+      margin: 0 auto 12px;
+      border-radius: 17px;
+      background: #173c24;
+      font-size: 30px;
     }
-    .brand h1 { font-size: 23px; margin: 0 0 3px; }
-    .brand p { margin: 0; color: var(--muted); font-size: 13px; }
-    .auth-card h2 { margin: 0 0 7px; font-size: 22px; }
-    .auth-description { margin: 0 0 23px; color: var(--muted); font-size: 14px; line-height: 1.5; }
-    .field { display: grid; gap: 7px; margin-bottom: 15px; }
-    .field label { color: #c9d4c9; font-size: 13px; font-weight: 650; }
-    .field input, .field textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: #090d09;
-      border-radius: 8px;
-      padding: 12px;
-      color: var(--text);
-    }
-    .field textarea { resize: vertical; min-height: 85px; }
-    .field input:focus, .field textarea:focus { border-color: var(--green); outline: none; }
-    .auth-switch { display: flex; gap: 8px; margin-bottom: 20px; }
-    .auth-switch button { flex: 1; }
-    .auth-switch button.active { border-color: var(--green); color: var(--green); }
-    .auth-footer { margin-top: 18px; text-align: center; font-size: 12px; color: var(--muted); }
-    .text-button { color: var(--green); background: none; border: 0; padding: 5px; }
-    #authMessage { min-height: 20px; margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
-    #authMessage.error { color: var(--danger); }
-    #authMessage.success { color: var(--green); }
 
-    /* Main application */
-    #appScreen { height: 100vh; min-height: 480px; display: flex; overflow: hidden; }
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    h2 { font-size: 20px; margin: 0 0 18px; }
+    p { color: var(--muted); line-height: 1.5; }
+
+    .field { margin: 14px 0; }
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: #c9d1d9;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .actions button { flex: 1; }
+
+    #message {
+      margin-top: 16px;
+      padding: 11px;
+      border-radius: 8px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    #message:empty { display: none; }
+    #message.info { background: #14271a; color: #9be9a8; }
+    #message.error { background: #321919; color: var(--danger); }
+
+    #appScreen {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 76px 220px minmax(0, 1fr);
+    }
+
     .server-rail {
-      width: 72px;
-      flex: 0 0 72px;
-      background: #080a08;
-      border-right: 1px solid #192119;
-      padding: 13px 10px;
+      background: #070907;
+      border-right: 1px solid var(--border);
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
+      gap: 12px;
       align-items: center;
-      gap: 11px;
     }
+
     .server-icon {
       width: 48px;
       height: 48px;
-      border: 1px solid transparent;
       border-radius: 15px;
+      display: grid;
+      place-items: center;
       background: var(--panel2);
-      color: var(--text);
-      font-size: 18px;
       font-weight: 800;
-      transition: .15s;
     }
-    .server-icon:hover, .server-icon.active {
-      border-color: #31683d;
-      border-radius: 12px;
-      background: #1b3b23;
-      color: var(--green);
-    }
-    .rail-divider { width: 30px; height: 1px; background: var(--border); }
-    .rail-spacer { flex: 1; }
 
-    .channel-sidebar {
-      width: 245px;
-      flex: 0 0 245px;
-      display: flex;
-      flex-direction: column;
+    .server-icon.active { background: var(--green); }
+
+    .sidebar {
       background: var(--panel);
       border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
       min-width: 0;
     }
-    .server-heading {
-      min-height: 64px;
-      padding: 17px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+    .sidebar-header {
+      padding: 20px 16px;
+      font-weight: bold;
       border-bottom: 1px solid var(--border);
-      font-weight: 800;
     }
-    .section-label {
+
+    .channel {
+      margin: 5px 9px;
+      padding: 11px;
       color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      padding: 23px 12px 9px;
-    }
-    .channel-list { padding: 0 8px; }
-    .channel-button {
-      width: 100%;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px;
-      border: 0;
       border-radius: 7px;
-      background: transparent;
-      color: var(--muted);
-      margin-bottom: 3px;
     }
-    .channel-button:hover { background: #1a211a; color: var(--text); }
-    .channel-button.active { background: #203b25; color: #c8f7d3; }
-    .channel-symbol { font-size: 18px; font-weight: 600; }
-    .sidebar-spacer { flex: 1; }
-    .user-panel {
+
+    .channel.active {
+      color: var(--text);
+      background: #1b3020;
+    }
+
+    .account {
+      margin-top: auto;
+      padding: 12px;
+      border-top: 1px solid var(--border);
       display: flex;
       gap: 9px;
       align-items: center;
-      padding: 12px 10px;
-      background: #0b0e0b;
-      border-top: 1px solid var(--border);
       min-width: 0;
     }
+
     .avatar {
       width: 36px;
       height: 36px;
-      flex: 0 0 36px;
+      border-radius: 50%;
+      background: var(--green);
       display: grid;
       place-items: center;
-      border-radius: 50%;
-      background: #24512e;
-      color: #b9f4c7;
-      font-weight: 800;
-      overflow: hidden;
+      font-weight: bold;
+      flex-shrink: 0;
     }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-info { flex: 1; min-width: 0; }
-    .user-info strong, .user-info span {
+
+    .account-info { min-width: 0; flex: 1; }
+    .account-info strong {
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
     }
-    .user-info strong { font-size: 12px; }
-    .user-info span { color: var(--muted); font-size: 11px; margin-top: 3px; }
-    .icon-button {
-      width: 34px;
-      height: 34px;
-      border: 0;
-      border-radius: 7px;
-      background: transparent;
-      color: var(--muted);
-    }
-    .icon-button:hover { background: var(--panel3); color: var(--text); }
 
-    .chat-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .muted { color: var(--muted); }
+
+    .chat {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
     .chat-header {
-      height: 64px;
-      flex: 0 0 64px;
+      height: 65px;
       padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
       border-bottom: 1px solid var(--border);
-      background: #0d100d;
+      font-weight: bold;
     }
-    .chat-header .channel-symbol { color: var(--muted); font-size: 23px; }
-    .chat-header h2 { margin: 0; font-size: 15px; }
-    .chat-header p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
-    .header-spacer { flex: 1; }
-    .chat-content { flex: 1; overflow-y: auto; padding: 24px; }
-    .welcome {
-      padding: 16px 0 22px;
-      border-bottom: 1px solid #202920;
-      margin-bottom: 22px;
-    }
-    .welcome-icon {
-      width: 55px;
-      height: 55px;
-      border-radius: 17px;
-      display: grid;
-      place-items: center;
-      background: #183c22;
-      color: var(--green);
-      font-size: 28px;
-      margin-bottom: 16px;
-    }
-    .welcome h2 { margin: 0 0 8px; font-size: 25px; }
-    .welcome p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .message-row { display: flex; gap: 12px; margin: 19px 0; }
-    .message-body { min-width: 0; }
-    .message-meta { display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap; }
-    .message-meta strong { font-size: 13px; }
-    .message-meta time { font-size: 11px; color: var(--muted); }
-    .message-text { margin: 5px 0 0; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .empty-note { text-align: center; color: var(--muted); font-size: 13px; padding: 25px 10px; }
 
-    .composer-wrap { padding: 0 22px 20px; }
-    .composer {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      background: #171d17;
-      border: 1px solid #293629;
-      border-radius: 12px;
-      padding: 10px;
-    }
-    .composer:focus-within { border-color: #376c42; }
-    .composer textarea {
+    #chatMessages {
       flex: 1;
-      min-width: 0;
-      min-height: 26px;
-      max-height: 150px;
-      resize: vertical;
-      border: 0;
-      outline: 0;
-      color: var(--text);
-      background: transparent;
-      padding: 5px;
+      padding: 22px;
     }
-    .composer textarea::placeholder { color: #758275; }
-    .composer button { align-self: flex-end; }
 
-    .member-sidebar {
-      width: 205px;
-      flex: 0 0 205px;
-      border-left: 1px solid var(--border);
-      background: var(--panel);
-      padding: 18px 12px;
-      overflow-y: auto;
+    .welcome {
+      margin: auto;
+      max-width: 600px;
+      padding: 40px 10px;
     }
-    .member-heading {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin: 8px 0 14px;
-    }
-    .member-item { display: flex; align-items: center; gap: 9px; margin: 12px 0; }
-    .member-item .avatar { width: 30px; height: 30px; flex-basis: 30px; font-size: 12px; }
-    .member-item strong { font-size: 12px; display: block; overflow-wrap: anywhere; }
-    .online-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 5px; }
 
-    /* Dialogs */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: grid;
-      place-items: center;
-      padding: 18px;
-      background: #000b;
-    }
-    .modal {
-      width: min(100%, 440px);
-      max-height: 90vh;
-      overflow-y: auto;
+    .composer { padding: 16px 20px 22px; }
+    .composer-row { display: flex; gap: 10px; }
+    .composer-row input { flex: 1; min-width: 0; }
+
+    .profile-panel {
+      width: 100%;
+      max-width: 560px;
+      margin: 35px auto;
+      padding: 24px;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 23px;
-      box-shadow: 0 25px 80px #0009;
+      border-radius: 14px;
     }
-    .modal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .modal-top h2 { margin: 0; font-size: 20px; }
-    .modal-message { color: var(--muted); font-size: 13px; line-height: 1.5; min-height: 18px; }
 
-    @media (max-width: 1050px) {
-      .member-sidebar { display: none; }
-    }
     @media (max-width: 700px) {
-      .server-rail { width: 58px; flex-basis: 58px; padding: 12px 6px; }
-      .server-icon { width: 43px; height: 43px; }
-      .channel-sidebar { width: 185px; flex-basis: 185px; }
-      .chat-content { padding: 16px; }
-      .composer-wrap { padding: 0 12px 12px; }
-    }
-    @media (max-width: 510px) {
-      .channel-sidebar { width: 145px; flex-basis: 145px; }
-      .server-rail { display: none; }
-      .server-heading { padding: 13px; font-size: 13px; }
-      .channel-button { padding: 9px 7px; font-size: 12px; }
+      #appScreen { grid-template-columns: 58px minmax(0, 1fr); }
+      .server-rail { padding: 10px 5px; }
+      .server-icon { width: 42px; height: 42px; }
+      .sidebar { display: none; }
       .chat-header { padding: 0 12px; }
-      .welcome h2 { font-size: 21px; }
+      #chatMessages { padding: 12px; }
     }
   </style>
 </head>
@@ -371,580 +269,376 @@
   <section id="authScreen">
     <div class="auth-card">
       <div class="brand">
-        <div class="brand-mark">C</div>
-        <div>
-          <h1>ChickenTalk</h1>
-          <p>Your corner of the internet.</p>
+        <div class="brand-icon">🐔</div>
+        <h1>ChickenTalk</h1>
+        <p>Your corner of the internet.</p>
+      </div>
+
+      <div id="authForms">
+        <div id="loginForm">
+          <h2>Welcome back</h2>
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Your password">
+          </div>
+          <div class="actions">
+            <button id="loginButton" class="primary">Log in</button>
+            <button id="showSignup">Create account</button>
+          </div>
+          <div class="actions">
+            <button id="forgotButton">Forgot password?</button>
+          </div>
+        </div>
+
+        <div id="signupForm" class="hidden">
+          <h2>Create your account</h2>
+          <div class="field">
+            <label for="signupUsername">Username</label>
+            <input id="signupUsername" maxlength="24" autocomplete="username" placeholder="chicken123">
+          </div>
+          <div class="field">
+            <label for="signupEmail">Email</label>
+            <input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="signupPassword">Password</label>
+            <input id="signupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+          </div>
+          <div class="actions">
+            <button id="signupButton" class="primary">Sign up</button>
+            <button id="showLogin">Back to login</button>
+          </div>
+        </div>
+
+        <div id="resetForm" class="hidden">
+          <h2>Reset password</h2>
+          <p>We'll email you a password reset link.</p>
+          <div class="field">
+            <label for="resetEmail">Email</label>
+            <input id="resetEmail" type="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="actions">
+            <button id="resetButton" class="primary">Send reset email</button>
+            <button id="resetBack">Back</button>
+          </div>
         </div>
       </div>
 
-      <div class="auth-switch">
-        <button id="loginTab" class="secondary active" type="button">Log in</button>
-        <button id="signupTab" class="secondary" type="button">Create account</button>
-      </div>
-
-      <h2 id="authTitle">Welcome back.</h2>
-      <p class="auth-description" id="authDescription">Log in to continue to ChickenTalk.</p>
-
-      <form id="authForm">
-        <div class="field hidden" id="usernameField">
-          <label for="usernameInput">Username</label>
-          <input id="usernameInput" autocomplete="username" minlength="3" maxlength="24"
-            pattern="[A-Za-z0-9_]+" placeholder="your_username">
-        </div>
-        <div class="field">
-          <label for="emailInput">Email address</label>
-          <input id="emailInput" type="email" autocomplete="email" required maxlength="254"
-            placeholder="you@example.com">
-        </div>
-        <div class="field">
-          <label for="passwordInput">Password</label>
-          <input id="passwordInput" type="password" autocomplete="current-password"
-            minlength="6" required placeholder="Your password">
-        </div>
-        <button class="primary full" id="authSubmit" type="submit">Log in</button>
-      </form>
-
-      <div style="text-align:center;margin-top:12px">
-        <button class="text-button" id="forgotPassword" type="button">Forgot password?</button>
-      </div>
-      <p id="authMessage" role="status" aria-live="polite"></p>
-      <p class="auth-footer">ChickenTalk · Black and forest green.</p>
+      <div id="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
   <section id="appScreen" class="hidden">
     <aside class="server-rail">
-      <button class="server-icon active" title="ChickenTalk home" aria-label="ChickenTalk home">C</button>
-      <div class="rail-divider"></div>
-      <button class="server-icon" id="addServerButton" title="Create a server" aria-label="Create a server">+</button>
-      <div class="rail-spacer"></div>
-      <button class="server-icon" id="railProfileButton" title="Your profile" aria-label="Your profile">●</button>
+      <div class="server-icon active" title="ChickenTalk">🐔</div>
+      <div class="server-icon" title="Servers">+</div>
     </aside>
 
-    <aside class="channel-sidebar">
-      <div class="server-heading">
-        <span id="serverName">ChickenTalk</span>
-        <button class="icon-button" id="serverMenuButton" title="Server options" aria-label="Server options">⌄</button>
-      </div>
-
-      <div class="section-label">Text channels</div>
-      <nav class="channel-list" id="channelList">
-        <button class="channel-button active" data-channel="general">
-          <span class="channel-symbol">#</span><span>general</span>
-        </button>
-        <button class="channel-button" data-channel="memes">
-          <span class="channel-symbol">#</span><span>memes</span>
-        </button>
-      </nav>
-
-      <div class="section-label">Direct messages</div>
-      <div class="channel-list">
-        <button class="channel-button" id="newDMButton">
-          <span class="channel-symbol">＋</span><span>New message</span>
-        </button>
-        <button class="channel-button" id="newGroupButton">
-          <span class="channel-symbol">＋</span><span>New group</span>
-        </button>
-      </div>
-
-      <div class="sidebar-spacer"></div>
-      <div class="user-panel">
-        <div class="avatar" id="userAvatar">C</div>
-        <div class="user-info">
-          <strong id="sidebarDisplayName">ChickenTalk user</strong>
-          <span id="sidebarUsername">@user</span>
+    <aside class="sidebar">
+      <div class="sidebar-header">ChickenTalk</div>
+      <div class="channel active"># general</div>
+      <div class="channel"># memes</div>
+      <div class="account">
+        <div class="avatar" id="smallAvatar">C</div>
+        <div class="account-info">
+          <strong id="smallUsername">User</strong>
+          <span class="muted">Online</span>
         </div>
-        <button class="icon-button" id="profileButton" title="Edit profile" aria-label="Edit profile">⚙</button>
+        <button id="profileButton" title="Profile">⚙</button>
       </div>
     </aside>
 
-    <main class="chat-main">
-      <header class="chat-header">
-        <span class="channel-symbol" id="headerSymbol">#</span>
-        <div>
-          <h2 id="channelTitle">general</h2>
-          <p id="channelDescription">The place to talk about anything.</p>
-        </div>
-        <div class="header-spacer"></div>
-        <button class="icon-button" id="membersToggle" title="Members" aria-label="Members">☷</button>
-      </header>
-
-      <div class="chat-content" id="chatContent">
-        <div class="welcome" id="welcomePanel">
-          <div class="welcome-icon">#</div>
-          <h2>Welcome to #general</h2>
-          <p>This is the beginning of the channel. Say hello and get the conversation started.</p>
-        </div>
-        <div id="messagesArea">
-          <p class="empty-note" id="messageNotice">Your messages will appear here.</p>
+    <main class="chat">
+      <header class="chat-header"># general <span class="muted" style="margin-left:12px;font-weight:normal">ChickenTalk</span></header>
+      <div id="chatMessages">
+        <div class="welcome">
+          <h1>Welcome to ChickenTalk</h1>
+          <p>Your account is signed in.</p>
+          <p>Chat messages, servers, direct messages and groups still need their database and interface wiring before they will work.</p>
         </div>
       </div>
-
-      <div class="composer-wrap">
-        <form class="composer" id="messageForm">
-          <textarea id="messageInput" rows="1" maxlength="4000"
-            placeholder="Message #general" aria-label="Write a message"></textarea>
-          <button class="primary" type="submit" id="sendButton">Send</button>
-        </form>
-        <p class="small muted" style="margin:8px 4px 0" id="composerNote">
-          ChickenTalk chat interface
-        </p>
+      <div class="composer">
+        <div class="composer-row">
+          <input id="messageInput" placeholder="Messaging isn't connected yet" disabled>
+          <button disabled>Send</button>
+        </div>
       </div>
     </main>
-
-    <aside class="member-sidebar" id="memberSidebar">
-      <div class="member-heading">MEMBERS</div>
-      <div class="member-item">
-        <div class="avatar" id="memberAvatar">C</div>
-        <div>
-          <strong id="memberDisplayName">ChickenTalk user</strong>
-          <span class="small muted"><span class="online-dot"></span>You</span>
-        </div>
-      </div>
-      <p class="small muted" id="memberNote">Only your account is shown until member loading is connected.</p>
-    </aside>
   </section>
 
-  <div id="modalBackdrop" class="modal-backdrop hidden">
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-top">
-        <h2 id="modalTitle">Your profile</h2>
-        <button class="icon-button" id="closeModal" aria-label="Close dialog">✕</button>
+  <section id="profileScreen" class="hidden">
+    <div class="profile-panel">
+      <h1>Your profile</h1>
+      <p>Edit the information shown on your ChickenTalk account.</p>
+      <div class="field">
+        <label for="profileUsername">Username</label>
+        <input id="profileUsername" maxlength="24">
       </div>
-      <div id="modalContent"></div>
-      <p id="modalMessage" class="modal-message" role="status" aria-live="polite"></p>
-    </section>
-  </div>
+      <div class="field">
+        <label for="profileDisplayName">Display name</label>
+        <input id="profileDisplayName" maxlength="50">
+      </div>
+      <div class="field">
+        <label for="profileBio">Bio</label>
+        <textarea id="profileBio" rows="4" maxlength="190"></textarea>
+      </div>
+      <div class="actions">
+        <button id="saveProfile" class="primary">Save profile</button>
+        <button id="backToChat">Back</button>
+        <button id="logoutButton">Log out</button>
+      </div>
+      <div id="profileMessage" role="status" aria-live="polite"></div>
+    </div>
+  </section>
 
   <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    import { createClient } from
+      'https://esm.sh/@supabase/supabase-js@2';
 
-    // These are the project's public Supabase URL and publishable key.
-    // Never put a service-role or secret key in this file.
     const SUPABASE_URL = 'https://emxsxlkekskmubvyfgag.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
+    const SUPABASE_KEY = 'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const $ = (id) => document.getElementById(id);
-    const state = {
-      mode: 'login',
-      user: null,
-      profile: null,
-      channel: 'general',
-      busy: false
-    };
+    const $ = id => document.getElementById(id);
+    let currentUser = null;
 
-    function setAuthMessage(message, type = '') {
-      const el = $('authMessage');
-      el.textContent = message;
+    function showMessage(text, type = 'info') {
+      const el = $('message');
+      el.textContent = text;
       el.className = type;
     }
 
-    function setModalMessage(message, type = '') {
-      const el = $('modalMessage');
-      el.textContent = message;
-      el.className = `modal-message ${type}`;
+    function showProfileMessage(text, type = 'info') {
+      const el = $('profileMessage');
+      el.textContent = text;
+      el.className = type;
     }
 
-    function setBusy(busy) {
-      state.busy = busy;
-      $('authSubmit').disabled = busy;
-      $('authSubmit').textContent = busy
-        ? 'Please wait…'
-        : state.mode === 'signup' ? 'Create account' : 'Log in';
+    function showAuthForm(name) {
+      $('loginForm').classList.toggle('hidden', name !== 'login');
+      $('signupForm').classList.toggle('hidden', name !== 'signup');
+      $('resetForm').classList.toggle('hidden', name !== 'reset');
+      showMessage('');
     }
 
-    function setAuthMode(mode) {
-      state.mode = mode;
-      const signup = mode === 'signup';
-      $('loginTab').classList.toggle('active', !signup);
-      $('signupTab').classList.toggle('active', signup);
-      $('usernameField').classList.toggle('hidden', !signup);
-      $('authTitle').textContent = signup ? 'Join ChickenTalk.' : 'Welcome back.';
-      $('authDescription').textContent = signup
-        ? 'Create an account to get started.'
-        : 'Log in to continue to ChickenTalk.';
-      $('passwordInput').autocomplete = signup ? 'new-password' : 'current-password';
-      setAuthMessage('');
-      setBusy(false);
+    function showScreen(name) {
+      $('authScreen').classList.toggle('hidden', name !== 'auth');
+      $('appScreen').classList.toggle('hidden', name !== 'app');
+      $('profileScreen').classList.toggle('hidden', name !== 'profile');
     }
 
-    $('loginTab').addEventListener('click', () => setAuthMode('login'));
-    $('signupTab').addEventListener('click', () => setAuthMode('signup'));
-
-    $('authForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (state.busy) return;
-
-      const email = $('emailInput').value.trim();
-      const password = $('passwordInput').value;
-      setBusy(true);
-      setAuthMessage('');
-
-      try {
-        if (state.mode === 'signup') {
-          const username = $('usernameInput').value.trim().toLowerCase();
-          if (!/^[a-z0-9_]{3,24}$/.test(username)) {
-            throw new Error('Usernames must be 3–24 characters using letters, numbers, or underscores.');
-          }
-
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { username } }
-          });
-          if (error) throw error;
-
-          if (data.session) {
-            state.user = data.user;
-            await openApplication();
-          } else {
-            setAuthMessage(
-              'Account request sent. Check your email to confirm your account, then log in.',
-              'success'
-            );
-          }
-        } else {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          state.user = data.user;
-          await openApplication();
-        }
-      } catch (error) {
-        setAuthMessage(error.message || 'Something went wrong. Please try again.', 'error');
-      } finally {
-        setBusy(false);
+    function friendlyError(error) {
+      const msg = error?.message || 'Something went wrong.';
+      if (/invalid.*credentials/i.test(msg)) return 'Email or password is incorrect.';
+      if (/expired|invalid.*token|token.*invalid/i.test(msg)) {
+        return 'This email link is invalid or expired. Request a new email and open the newest link once.';
       }
-    });
+      if (/already registered/i.test(msg)) return 'An account with this email already exists.';
+      return msg;
+    }
 
-    $('forgotPassword').addEventListener('click', async () => {
-      const email = $('emailInput').value.trim();
-      if (!email) {
-        setAuthMessage('Enter your email address first.');
-        $('emailInput').focus();
-        return;
-      }
-      try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) throw error;
-        setAuthMessage('If password recovery is enabled, check your email for the reset link.', 'success');
-      } catch (error) {
-        setAuthMessage(error.message || 'Could not request a password reset.', 'error');
-      }
-    });
-
-    async function loadProfile() {
-      if (!state.user) return null;
+    async function loadProfile(user) {
+      currentUser = user;
+      const fallback = user.user_metadata?.username || user.email?.split('@')[0] || 'Chicken';
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, username, display_name, avatar_url, bio')
-        .eq('id', state.user.id)
+        .select('username, display_name, bio')
+        .eq('id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
-      state.profile = data;
-      return data;
+      if (error) console.error('Profile load:', error.message);
+
+      const username = data?.username || fallback;
+      const displayName = data?.display_name || username;
+
+      $('smallUsername').textContent = displayName;
+      $('smallAvatar').textContent = (displayName[0] || 'C').toUpperCase();
+      $('profileUsername').value = username;
+      $('profileDisplayName').value = data?.display_name || '';
+      $('profileBio').value = data?.bio || '';
+
+      showScreen('app');
     }
 
-    function displayName() {
-      return state.profile?.display_name
-        || state.profile?.username
-        || state.user?.email?.split('@')[0]
-        || 'ChickenTalk user';
-    }
-
-    function initials(name) {
-      return (name || 'C').trim().slice(0, 1).toUpperCase() || 'C';
-    }
-
-    function renderUser() {
-      const name = displayName();
-      const username = state.profile?.username || state.user?.email?.split('@')[0] || 'user';
-      const avatarUrl = state.profile?.avatar_url;
-
-      $('sidebarDisplayName').textContent = name;
-      $('sidebarUsername').textContent = '@' + username;
-      $('memberDisplayName').textContent = name;
-
-      for (const id of ['userAvatar', 'memberAvatar']) {
-        const avatar = $(id);
-        avatar.replaceChildren();
-        if (avatarUrl) {
-          const image = document.createElement('img');
-          image.src = avatarUrl;
-          image.alt = '';
-          image.onerror = () => { avatar.textContent = initials(name); };
-          avatar.appendChild(image);
-        } else {
-          avatar.textContent = initials(name);
-        }
-      }
-    }
-
-    async function openApplication() {
-      $('authScreen').classList.add('hidden');
-      $('appScreen').classList.remove('hidden');
-
-      try {
-        await loadProfile();
-      } catch (error) {
-        console.error('Could not load profile:', error);
-        showNotice('Your account is signed in, but the profile could not be loaded. Check your Supabase profile policies.');
-      }
-
-      renderUser();
-      selectChannel(state.channel);
-    }
-
-    function showNotice(message) {
-      $('messageNotice').textContent = message;
-      $('messageNotice').classList.remove('hidden');
-    }
-
-    function selectChannel(channel) {
-      state.channel = channel;
-      const isGeneral = channel === 'general';
-      const title = isGeneral ? 'general' : channel === 'memes' ? 'memes' : channel;
-
-      $('channelTitle').textContent = title;
-      $('headerSymbol').textContent = channel.startsWith('dm:') ? '@' : '#';
-      $('channelDescription').textContent = channel.startsWith('dm:')
-        ? 'Direct messages'
-        : isGeneral ? 'The place to talk about anything.' : 'Share your favorite memes.';
-      $('messageInput').placeholder = `Message ${channel.startsWith('dm:') ? '' : '#'}${title}`;
-      $('welcomePanel').querySelector('h2').textContent = `Welcome to ${channel.startsWith('dm:') ? '' : '#'}${title}`;
-      $('welcomePanel').querySelector('.welcome-icon').textContent = channel.startsWith('dm:') ? '@' : '#';
-      $('welcomePanel').querySelector('p').textContent = isGeneral
-        ? 'This is the beginning of the channel. Say hello and get the conversation started.'
-        : channel === 'memes'
-          ? 'Post your favorite memes and share the funny stuff.'
-          : 'This conversation is ready for its messaging connection.';
-
-      document.querySelectorAll('[data-channel]').forEach((button) => {
-        button.classList.toggle('active', button.dataset.channel === channel);
-      });
-
-      $('messagesArea').replaceChildren();
-      showNotice('Messages are not connected to a database channel yet.');
-      $('composerNote').textContent = 'UI ready · Message persistence is not connected yet';
-    }
-
-    document.querySelectorAll('[data-channel]').forEach((button) => {
-      button.addEventListener('click', () => selectChannel(button.dataset.channel));
-    });
-
-    $('messageForm').addEventListener('submit', (event) => {
-      event.preventDefault();
-      const content = $('messageInput').value.trim();
-      if (!content) return;
-
-      // Intentionally do not pretend messages were delivered.
-      // Connect this to a real Supabase conversation/channel before enabling sending.
-      showNotice('Message not sent: this channel is not connected to message storage yet.');
-    });
-
-    function openModal(title, html) {
-      $('modalTitle').textContent = title;
-      $('modalContent').innerHTML = html;
-      setModalMessage('');
-      $('modalBackdrop').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      $('modalBackdrop').classList.add('hidden');
-      $('modalContent').replaceChildren();
-      setModalMessage('');
-    }
-
-    $('closeModal').addEventListener('click', closeModal);
-    $('modalBackdrop').addEventListener('click', (event) => {
-      if (event.target === $('modalBackdrop')) closeModal();
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeModal();
-    });
-
-    function openProfileEditor() {
-      if (!state.user) return;
-      const username = state.profile?.username || '';
-      const name = state.profile?.display_name || '';
-      const bio = state.profile?.bio || '';
-      const avatar = state.profile?.avatar_url || '';
-
-      openModal('Your profile', `
-        <form id="profileForm">
-          <div class="field">
-            <label for="profileUsername">Username</label>
-            <input id="profileUsername" value="${escapeAttribute(username)}" disabled>
-          </div>
-          <div class="field">
-            <label for="profileDisplayName">Display name</label>
-            <input id="profileDisplayName" maxlength="40" value="${escapeAttribute(name)}" placeholder="How people see you">
-          </div>
-          <div class="field">
-            <label for="profileAvatar">Avatar image URL (optional)</label>
-            <input id="profileAvatar" type="url" maxlength="1000" value="${escapeAttribute(avatar)}" placeholder="https://example.com/avatar.png">
-          </div>
-          <div class="field">
-            <label for="profileBio">About me</label>
-            <textarea id="profileBio" maxlength="300" placeholder="A little about you">${escapeHTML(bio)}</textarea>
-          </div>
-          <button class="primary full" type="submit">Save profile</button>
-        </form>
-        <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
-        <p class="small muted">Signed in as ${escapeHTML(state.user.email || '')}</p>
-        <button class="secondary full" id="logoutButton" type="button">Log out</button>
-      `);
-
-      $('profileForm').addEventListener('submit', saveProfile);
-      $('logoutButton').addEventListener('click', signOut);
-    }
-
-    async function saveProfile(event) {
-      event.preventDefault();
-      if (!state.user) return;
-
-      const display_name = $('profileDisplayName').value.trim() || null;
-      const avatar_url = $('profileAvatar').value.trim() || null;
-      const bio = $('profileBio').value.trim() || null;
-
-      if (avatar_url) {
-        try {
-          const url = new URL(avatar_url);
-          if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-            throw new Error('Avatar URL must use HTTP or HTTPS.');
-          }
-        } catch {
-          setModalMessage('Enter a valid HTTP or HTTPS avatar URL.');
-          return;
-        }
-      }
-
-      const button = $('profileForm').querySelector('button[type="submit"]');
-      button.disabled = true;
-      button.textContent = 'Saving…';
-
-      try {
-        const { error } = await supabase
-          .from('profiles')
-          .update({ display_name, avatar_url, bio })
-          .eq('id', state.user.id);
-
-        if (error) throw error;
-        await loadProfile();
-        renderUser();
-        setModalMessage('Profile saved.', 'green');
-        setTimeout(closeModal, 600);
-      } catch (error) {
-        setModalMessage(error.message || 'Could not save your profile.');
-        button.disabled = false;
-        button.textContent = 'Save profile';
-      }
-    }
-
-    async function signOut() {
-      try {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-        closeModal();
-        state.user = null;
-        state.profile = null;
-        $('appScreen').classList.add('hidden');
-        $('authScreen').classList.remove('hidden');
-        $('passwordInput').value = '';
-        setAuthMode('login');
-      } catch (error) {
-        setModalMessage(error.message || 'Could not log out.');
-      }
-    }
-
-    $('profileButton').addEventListener('click', openProfileEditor);
-    $('railProfileButton').addEventListener('click', openProfileEditor);
-
-    $('addServerButton').addEventListener('click', () => {
-      openModal('Create a server', `
-        <p class="muted" style="line-height:1.6">Server creation is not connected yet. The database tables exist, but creating servers requires the appropriate Supabase insert policies and channel setup.</p>
-        <button class="secondary full" id="serverInfoClose" type="button">Got it</button>
-      `);
-      $('serverInfoClose').addEventListener('click', closeModal);
-    });
-
-    $('serverMenuButton').addEventListener('click', () => {
-      openModal('ChickenTalk server', `
-        <p class="muted" style="line-height:1.6">General and Memes are currently interface channels. They are not yet backed by server records in Supabase.</p>
-        <button class="secondary full" id="serverMenuClose" type="button">Close</button>
-      `);
-      $('serverMenuClose').addEventListener('click', closeModal);
-    });
-
-    $('newDMButton').addEventListener('click', () => {
-      openModal('New direct message', `
-        <p class="muted" style="line-height:1.6">Direct messaging needs a user search and conversation membership connection before messages can be sent.</p>
-        <button class="secondary full" id="dmClose" type="button">Close</button>
-      `);
-      $('dmClose').addEventListener('click', closeModal);
-    });
-
-    $('newGroupButton').addEventListener('click', () => {
-      openModal('New group', `
-        <p class="muted" style="line-height:1.6">Group creation will need member selection and a conversation record in Supabase.</p>
-        <button class="secondary full" id="groupClose" type="button">Close</button>
-      `);
-      $('groupClose').addEventListener('click', closeModal);
-    });
-
-    $('membersToggle').addEventListener('click', () => {
-      $('memberSidebar').classList.toggle('hidden');
-    });
-
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, (char) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      })[char]);
-    }
-
-    function escapeAttribute(value) {
-      return escapeHTML(value);
-    }
-
-    async function start() {
+    async function finishAuth() {
+      /*
+       * Supabase email links for desktop apps need a matching callback.
+       * This page cannot receive localhost redirects unless a local server
+       * is running. It also cannot automatically intercept a browser link.
+       * We deliberately do not treat a redirect URL as proof of login.
+       */
       const { data, error } = await supabase.auth.getSession();
+
       if (error) {
-        console.error('Could not restore session:', error);
-        setAuthMessage('Could not restore your session. Please log in again.', 'error');
+        showScreen('auth');
+        showAuthForm('login');
+        showMessage(friendlyError(error), 'error');
         return;
       }
 
       if (data.session?.user) {
-        state.user = data.session.user;
-        await openApplication();
+        await loadProfile(data.session.user);
+      } else {
+        showScreen('auth');
+        showAuthForm('login');
       }
-
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_OUT') {
-          state.user = null;
-          state.profile = null;
-          $('appScreen').classList.add('hidden');
-          $('authScreen').classList.remove('hidden');
-        } else if (session?.user && !state.user) {
-          state.user = session.user;
-          openApplication().catch((error) => {
-            console.error('Could not open ChickenTalk:', error);
-          });
-        }
-      });
     }
 
-    start().catch((error) => {
-      console.error('ChickenTalk startup error:', error);
-      setAuthMessage(
-        'ChickenTalk could not initialize Supabase. Check your connection and the developer console.',
-        'error'
-      );
+    $('showSignup').addEventListener('click', () => showAuthForm('signup'));
+    $('showLogin').addEventListener('click', () => showAuthForm('login'));
+    $('forgotButton').addEventListener('click', () => {
+      $('resetEmail').value = $('loginEmail').value;
+      showAuthForm('reset');
     });
+    $('resetBack').addEventListener('click', () => showAuthForm('login'));
+
+    $('loginButton').addEventListener('click', async () => {
+      const email = $('loginEmail').value.trim();
+      const password = $('loginPassword').value;
+
+      if (!email || !password) return showMessage('Enter your email and password.', 'error');
+
+      $('loginButton').disabled = true;
+      showMessage('Signing in…');
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        await loadProfile(data.user);
+      } catch (error) {
+        showMessage(friendlyError(error), 'error');
+      } finally {
+        $('loginButton').disabled = false;
+      }
+    });
+
+    $('signupButton').addEventListener('click', async () => {
+      const username = $('signupUsername').value.trim().toLowerCase();
+      const email = $('signupEmail').value.trim();
+      const password = $('signupPassword').value;
+
+      if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+        return showMessage('Username must be 3–24 characters using letters, numbers or underscores.', 'error');
+      }
+      if (!email || password.length < 8) {
+        return showMessage('Enter a valid email and a password of at least 8 characters.', 'error');
+      }
+
+      $('signupButton').disabled = true;
+      showMessage('Creating your account…');
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { username },
+            // This redirect is not sufficient for a desktop callback.
+            // A matching callback must be implemented in main.js.
+            emailRedirectTo: 'http://localhost:3000'
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          await loadProfile(data.user);
+        } else {
+          showMessage('Account created. Check your email, then open the newest confirmation link. The desktop callback still needs to be configured.', 'info');
+          showAuthForm('login');
+        }
+      } catch (error) {
+        showMessage(friendlyError(error), 'error');
+      } finally {
+        $('signupButton').disabled = false;
+      }
+    });
+
+    $('resetButton').addEventListener('click', async () => {
+      const email = $('resetEmail').value.trim();
+      if (!email) return showMessage('Enter your email address.', 'error');
+
+      $('resetButton').disabled = true;
+      showMessage('Sending password reset email…');
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: 'http://localhost:3000'
+        });
+        if (error) throw error;
+        showMessage('If the address is registered, a reset email will arrive. The callback page must be running to finish the reset.');
+      } catch (error) {
+        showMessage(friendlyError(error), 'error');
+      } finally {
+        $('resetButton').disabled = false;
+      }
+    });
+
+    $('profileButton').addEventListener('click', () => {
+      showProfileMessage('');
+      showScreen('profile');
+    });
+
+    $('backToChat').addEventListener('click', () => showScreen('app'));
+
+    $('saveProfile').addEventListener('click', async () => {
+      if (!currentUser) return;
+
+      const username = $('profileUsername').value.trim().toLowerCase();
+      const display_name = $('profileDisplayName').value.trim();
+      const bio = $('profileBio').value.trim();
+
+      if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+        return showProfileMessage('Username must be 3–24 characters using letters, numbers or underscores.', 'error');
+      }
+
+      $('saveProfile').disabled = true;
+
+      try {
+        const { error } = await supabase.from('profiles').upsert({
+          id: currentUser.id,
+          username,
+          display_name: display_name || username,
+          bio
+        }, { onConflict: 'id' });
+
+        if (error) throw error;
+
+        $('smallUsername').textContent = display_name || username;
+        $('smallAvatar').textContent = (display_name || username)[0].toUpperCase();
+        showProfileMessage('Profile saved.');
+      } catch (error) {
+        showProfileMessage(friendlyError(error), 'error');
+      } finally {
+        $('saveProfile').disabled = false;
+      }
+    });
+
+    $('logoutButton').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        showProfileMessage(friendlyError(error), 'error');
+        return;
+      }
+      currentUser = null;
+      showScreen('auth');
+      showAuthForm('login');
+      showMessage('You have been logged out.');
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user && !currentUser) {
+        loadProfile(session.user);
+      }
+    });
+
+    await finishAuth();
   </script>
 </body>
 </html>
