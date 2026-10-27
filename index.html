@@ -2,506 +2,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ChickenTalk</title>
-<style>
-:root {
-  --bg:#090c09; --rail:#080b08; --panel:#101610; --panel2:#151e15;
-  --hover:#1d2b1d; --green:#397b3b; --light:#75c879;
-  --text:#e5eee3; --muted:#899588; --border:#253125;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,sans-serif}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--light);outline-offset:2px}
-.app{height:100vh;display:grid;grid-template-columns:66px 245px minmax(0,1fr)}
-.rail{background:var(--rail);border-right:1px solid var(--border);display:flex;align-items:center;flex-direction:column;gap:12px;padding:12px 9px}
-.brand,.rail-button{width:46px;height:46px;border-radius:15px;background:#172317;border:1px solid #2c402d;color:var(--light);font-size:20px;font-weight:bold;display:grid;place-items:center}
-.brand{background:var(--green);color:white}
-.rail-button:hover,.rail-button.active{background:var(--green);color:white}
-.rail-line{width:30px;height:1px;background:var(--border)}
-.sidebar{background:#0d120d;border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:0}
-.side-head{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 15px;font-size:16px;font-weight:bold}
-.side-head span{flex:1}
-.side-head button,.section button{background:transparent;border:0;color:var(--muted);font-size:20px}
-.side-content{padding:15px 10px;overflow:auto;flex:1}
-.section{display:flex;align-items:center;padding:10px 7px 7px;color:var(--muted);font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:.8px}
-.section span{flex:1}
-.item{width:100%;display:flex;align-items:center;gap:9px;border:0;border-radius:6px;padding:10px 9px;color:var(--muted);background:transparent;text-align:left;margin:2px 0}
-.item:hover,.item.active{background:var(--hover);color:var(--text)}
-.item.active{color:#a5e6a7}
-.item-symbol{width:20px;text-align:center;font-size:17px}
-.item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.small-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:linear-gradient(135deg,#4c9a50,#203d23);color:white;font-weight:bold}
-.me{padding:12px;border-top:1px solid var(--border);background:#111811;display:flex;align-items:center;gap:9px}
-.me-info{min-width:0;flex:1}
-.me-name{font-weight:bold;overflow:hidden;text-overflow:ellipsis}
-.muted{color:var(--muted);font-size:11px;margin-top:4px}
-.me button{background:transparent;border:0;color:var(--muted);font-size:18px}
-.main{display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.top{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:11px}
-.top-symbol{font-size:23px;color:var(--light)}
-.top-info{min-width:0}
-.top-title{font-size:15px;font-weight:bold}
-.top-subtitle{font-size:12px;color:var(--muted);margin-top:4px}
-.top-actions{margin-left:auto;display:flex;gap:7px}
-.icon-btn{background:transparent;border:0;color:var(--muted);border-radius:6px;padding:8px;font-size:18px}
-.icon-btn:hover{background:var(--hover);color:white}
-.feed{flex:1;min-height:0;overflow-y:auto;padding:22px}
-.welcome{padding:15px 0 24px;border-bottom:1px solid var(--border);margin-bottom:20px}
-.logo-big{width:62px;height:62px;display:grid;place-items:center;border-radius:19px;background:#1c351d;border:1px solid #365d37;color:var(--light);font-weight:bold;font-size:28px;margin-bottom:15px}
-.welcome h1{font-size:24px;margin:0 0 9px}
-.welcome p{color:var(--muted);line-height:1.6;margin:0;max-width:650px}
-.message{display:flex;gap:12px;margin:20px 0}
-.message .small-avatar{width:39px;height:39px}
-.msg-content{flex:1;min-width:0}
-.msg-head{display:flex;gap:9px;align-items:baseline;margin-bottom:6px}
-.msg-author{font-weight:bold}
-.msg-time{font-size:11px;color:var(--muted)}
-.msg-text{line-height:1.6;color:#d4ded2;white-space:pre-wrap;overflow-wrap:anywhere}
-.composer-wrap{padding:12px 20px 20px}
-.composer{display:flex;align-items:flex-end;gap:10px;padding:10px 12px;background:#141b14;border:1px solid #293629;border-radius:10px}
-.composer:focus-within{border-color:#477e49}
-.composer textarea{flex:1;min-width:0;resize:none;max-height:130px;background:transparent;color:var(--text);border:0;outline:0;padding:5px 0;line-height:1.5}
-.composer textarea::placeholder{color:#718071}
-.send{background:var(--green);border:0;border-radius:7px;color:white;font-weight:bold;padding:10px 14px}
-.send:hover,.primary:hover{background:#4b964e}
-.empty{padding:22px 0;color:var(--muted);line-height:1.7}
-.empty h2{color:var(--text);font-size:20px}
-.empty-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
-.primary,.secondary{border-radius:7px;padding:11px 14px;font-weight:bold}
-.primary{background:var(--green);border:0;color:white}
-.secondary{background:#172117;border:1px solid #314331;color:var(--text)}
-.secondary:hover{background:var(--hover)}
-.modal-bg{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:20px;z-index:10}
-.modal{width:min(420px,100%);background:#111811;border:1px solid #304330;border-radius:12px;padding:22px;box-shadow:0 20px 80px #0009}
-.modal h2{margin:0 0 9px}
-.modal p{color:var(--muted);line-height:1.5}
-.modal label{display:block;color:var(--muted);margin:14px 0 6px}
-.modal input{width:100%;padding:11px;background:#080d08;color:white;border:1px solid var(--border);border-radius:7px}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-.modal-actions button{padding:10px 14px;border-radius:7px}
-.cancel{background:transparent;border:1px solid var(--border);color:var(--text)}
-@media(max-width:650px){.app{grid-template-columns:55px minmax(0,1fr)}.sidebar{display:none}.sidebar.mobile-open{display:flex;position:fixed;z-index:4;left:55px;top:0;bottom:0;width:245px;box-shadow:15px 0 35px #0008}.feed{padding:15px}.composer-wrap{padding:10px}.top{padding:0 10px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChickenTalk</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b09;
+      --panel: #101713;
+      --green: #1d7546;
+      --bright: #39b96f;
+      --text: #edf5ef;
+      --muted: #9aa99e;
+      --border: #26382c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top, #102719, var(--bg) 65%);
+      color: var(--text);
+      font: 15px Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(100%, 420px);
+      background: rgba(16, 23, 19, .97);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 24px 80px #0009;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 12px;
+      background: #17452c;
+      border: 1px solid #34764d;
+      border-radius: 17px;
+      font-size: 29px;
+    }
+
+    h1 { margin: 0; font-size: 28px; }
+    .subtitle { color: var(--muted); margin-top: 8px; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: #080d09;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 22px;
+    }
+
+    button, input { font: inherit; }
+
+    .tabs button {
+      border: 0;
+      padding: 11px;
+      color: var(--muted);
+      background: transparent;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .tabs button.active {
+      color: white;
+      background: #1d7546;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #c9d7cc;
+      margin: 15px 0 7px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #090e0b;
+      color: white;
+      border-radius: 9px;
+      padding: 12px;
+      outline: none;
+    }
+
+    input:focus { border-color: var(--bright); }
+
+    .primary {
+      width: 100%;
+      border: 0;
+      background: var(--green);
+      color: white;
+      border-radius: 9px;
+      padding: 13px;
+      margin-top: 22px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary:hover { background: #258b53; }
+    .primary:disabled { opacity: .6; cursor: wait; }
+
+    .status {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 9px;
+      background: #19271e;
+      color: #d8f5df;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .status.error { background: #351b1b; color: #ffcaca; }
+    .footnote {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 22px;
+    }
+
+    [hidden] { display: none !important; }
+  </style>
 </head>
 <body>
-<div class="app">
-  <aside class="rail">
-    <div class="brand" title="ChickenTalk">C</div>
-    <div class="rail-line"></div>
-    <button class="rail-button active" id="homeBtn" title="Direct messages">✉</button>
-    <button class="rail-button" id="newDMBtn" title="Add a person">＋</button>
-    <div class="rail-line"></div>
-    <div id="serverRail"></div>
-    <button class="rail-button" id="newServerBtn" title="Create server">＋</button>
-  </aside>
-
-  <aside class="sidebar" id="sidebar">
-    <div class="side-head"><span id="sidebarTitle">Messages</span><button id="sidebarMenu" title="Options">···</button></div>
-    <div class="side-content" id="sideContent"></div>
-    <div class="me">
-      <div class="small-avatar" id="myAvatar">U</div>
-      <div class="me-info"><div class="me-name" id="myName">user00000000</div><div class="muted">Your account · Local prototype</div></div>
-      <button id="editName" title="Change display name">⚙</button>
-    </div>
-  </aside>
-
-  <main class="main">
-    <header class="top">
-      <button class="icon-btn" id="toggleSidebar" title="Toggle sidebar">☰</button>
-      <span class="top-symbol" id="topSymbol">✉</span>
-      <div class="top-info"><div class="top-title" id="topTitle">Direct Messages</div><div class="top-subtitle" id="topSubtitle">Your private conversations</div></div>
-      <div class="top-actions">
-        <button class="icon-btn" id="addPersonTop" title="Add person">＋</button>
-        <button class="icon-btn" id="groupTop" title="Create group chat">♧</button>
-      </div>
+  <main class="card">
+    <header class="brand">
+      <div class="logo">🐔</div>
+      <h1>ChickenTalk</h1>
+      <div class="subtitle">Your flock. Your conversations.</div>
     </header>
-    <section class="feed" id="feed"></section>
-    <div class="composer-wrap" id="composerWrap" hidden>
-      <form class="composer" id="messageForm">
-        <textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message…" aria-label="Write a message"></textarea>
-        <button class="send" type="submit">Send</button>
-      </form>
+
+    <div class="tabs">
+      <button id="loginTab" class="active" type="button">Log in</button>
+      <button id="signupTab" type="button">Create account</button>
     </div>
+
+    <form id="authForm">
+      <div id="usernameField" hidden>
+        <label for="username">Username</label>
+        <input id="username" name="username"
+          minlength="3" maxlength="24"
+          pattern="[A-Za-z0-9_]{3,24}"
+          placeholder="Chicken username"
+          autocomplete="username">
+      </div>
+
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email"
+        placeholder="you@example.com"
+        autocomplete="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password"
+        minlength="8" placeholder="At least 8 characters"
+        autocomplete="current-password" required>
+
+      <button class="primary" id="submitButton" type="submit">
+        Log in
+      </button>
+    </form>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <p class="footnote">
+      By creating an account, you agree to use ChickenTalk responsibly.
+      Keep your password private.
+    </p>
   </main>
-</div>
 
-<script>
-(() => {
-"use strict";
-const $ = id => document.getElementById(id);
-const KEY = "chickentalk-platform-v2";
+  <script type="module">
+    import { createClient } from
+      'https://esm.sh/@supabase/supabase-js@2';
 
-function randomUsername() {
-  return "user" + String(Math.floor(Math.random() * 90000000) + 10000000);
-}
-function makeId(prefix) {
-  return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8);
-}
-const initial = {
-  username: randomUsername(),
-  people: [],
-  conversations: [],
-  servers: [],
-  selected: {type:"home",id:""},
-  messages: {}
-};
-let state = initial;
-try {
-  const saved = JSON.parse(localStorage.getItem(KEY) || "null");
-  if(saved && typeof saved.username==="string" && Array.isArray(saved.people) &&
-     Array.isArray(saved.conversations) && Array.isArray(saved.servers) && saved.messages) {
-    state = saved;
-  }
-} catch(e) { console.warn("ChickenTalk data could not be loaded.",e); }
+    // Replace these two values with your Supabase project details.
+    const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
+    const SUPABASE_PUBLISHABLE_KEY = 'PASTE_YOUR_PUBLISHABLE_KEY_HERE';
 
-function save() {
-  try { localStorage.setItem(KEY,JSON.stringify(state)); }
-  catch(e) { console.warn("ChickenTalk data could not be saved.",e); }
-}
-function el(tag,cls,text) {
-  const node=document.createElement(tag);
-  if(cls) node.className=cls;
-  if(text!==undefined) node.textContent=text;
-  return node;
-}
-function avatar(name) {
-  return (name || "?").trim().slice(0,1).toUpperCase();
-}
-function currentConversation() {
-  return state.conversations.find(c=>c.id===state.selected.id) || null;
-}
-function currentServer() {
-  return state.servers.find(s=>s.id===state.selected.id) || null;
-}
-function currentMessages() {
-  const id=state.selected.id;
-  if(!state.messages[id]) state.messages[id]=[];
-  return state.messages[id];
-}
-function addItem(parent,symbol,name,active,fn) {
-  const b=el("button","item"+(active?" active":""));
-  b.type="button";
-  b.append(el("span","item-symbol",symbol),el("span","item-name",name));
-  b.addEventListener("click",fn);
-  parent.append(b);
-}
-function section(parent,title,action,label) {
-  const head=el("div","section");
-  head.append(el("span","",title));
-  if(action) {
-    const btn=el("button","", "+");
-    btn.type="button"; btn.title=label;
-    btn.addEventListener("click",action);
-    head.append(btn);
-  }
-  parent.append(head);
-}
-function drawSidebar() {
-  const box=$("sideContent");
-  box.replaceChildren();
-  $("sidebarTitle").textContent=state.selected.type==="server" ? (currentServer()?.name||"Server") : "Messages";
+    const statusBox = document.querySelector('#status');
+    const form = document.querySelector('#authForm');
+    const usernameField = document.querySelector('#usernameField');
+    const usernameInput = document.querySelector('#username');
+    const emailInput = document.querySelector('#email');
+    const passwordInput = document.querySelector('#password');
+    const submitButton = document.querySelector('#submitButton');
+    const loginTab = document.querySelector('#loginTab');
+    const signupTab = document.querySelector('#signupTab');
 
-  if(state.selected.type==="server") {
-    const server=currentServer();
-    if(!server) { state.selected={type:"home",id:""}; drawAll(); return; }
-    section(box,"Channels",()=>createChannel(server),"Create channel");
-    (server.channels||[]).forEach(ch=>{
-      addItem(box,"#",ch.name,state.selected.channel===ch.id,()=>{
-        state.selected.channel=ch.id; drawAll();
-      });
-    });
-    if(!server.channels?.length) box.append(el("div","empty","This server has no channels yet. Create one to start."));
-    section(box,"Server members");
-    (server.members||[]).forEach(member=>addItem(box,"●",member, false,()=>{}));
-    return;
-  }
+    let mode = 'login';
+    let supabase = null;
 
-  section(box,"Direct messages",()=>addPerson(),"Add a person");
-  if(!state.conversations.some(c=>c.kind==="dm")) box.append(el("div","empty","No direct messages yet. Add a person to begin."));
-  state.conversations.filter(c=>c.kind==="dm").forEach(c=>{
-    addItem(box,"●",c.name,state.selected.type==="chat"&&state.selected.id===c.id,()=>{
-      state.selected={type:"chat",id:c.id}; drawAll();
-    });
-  });
-
-  section(box,"Group chats",()=>createGroup(),"Create group chat");
-  if(!state.conversations.some(c=>c.kind==="group")) box.append(el("div","empty","Your private groups will appear here."));
-  state.conversations.filter(c=>c.kind==="group").forEach(c=>{
-    addItem(box,"♧",c.name,state.selected.type==="chat"&&state.selected.id===c.id,()=>{
-      state.selected={type:"chat",id:c.id}; drawAll();
-    });
-  });
-
-  section(box,"Your servers",()=>createServer(),"Create server");
-  if(!state.servers.length) box.append(el("div","empty","You haven't joined or created any servers."));
-  state.servers.forEach(s=>{
-    addItem(box,"◆",s.name,state.selected.type==="server"&&state.selected.id===s.id,()=>{
-      state.selected={type:"server",id:s.id,channel:s.channels?.[0]?.id||""}; drawAll();
-    });
-  });
-}
-function drawRail() {
-  const rail=$("serverRail"); rail.replaceChildren();
-  state.servers.forEach(s=>{
-    const b=el("button","rail-button"+(state.selected.type==="server"&&state.selected.id===s.id?" active":""),
-      avatar(s.name));
-    b.title=s.name;
-    b.addEventListener("click",()=>{state.selected={type:"server",id:s.id,channel:s.channels?.[0]?.id||""};drawAll();});
-    rail.append(b);
-  });
-}
-function addWelcome(feed,title,description) {
-  const w=el("div","welcome");
-  w.append(el("div","logo-big","C"),el("h1","",title),el("p","",description));
-  feed.append(w);
-}
-function showEmptyHome(feed) {
-  const box=el("div","empty");
-  box.append(el("h2","","Your space. Your conversations."),
-    el("p","","ChickenTalk starts empty. Add someone by username, create a private group chat, or build your own server."));
-  const actions=el("div","empty-actions");
-  const add=el("button","primary","Add a person");
-  add.addEventListener("click",addPerson);
-  const group=el("button","secondary","Create group chat");
-  group.addEventListener("click",createGroup);
-  const server=el("button","secondary","Create a server");
-  server.addEventListener("click",createServer);
-  actions.append(add,group,server); box.append(actions); feed.append(box);
-}
-function drawChat() {
-  const feed=$("feed"); feed.replaceChildren();
-  const selected=state.selected;
-  $("composerWrap").hidden=true;
-  if(selected.type==="home") {
-    $("topSymbol").textContent="✉";
-    $("topTitle").textContent="Direct Messages";
-    $("topSubtitle").textContent="Your private conversations";
-    addWelcome(feed,"Welcome to ChickenTalk","A chat space with a forest-green and black look. No default servers, channels, or conversations.");
-    showEmptyHome(feed);
-    return;
-  }
-  if(selected.type==="chat") {
-    const c=currentConversation();
-    if(!c) {state.selected={type:"home",id:""};drawAll();return;}
-    $("topSymbol").textContent=c.kind==="group"?"♧":"●";
-    $("topTitle").textContent=c.name;
-    $("topSubtitle").textContent=c.kind==="group" ? "Private group · "+(c.members||[]).length+" members" : "Direct message";
-    $("composerWrap").hidden=false;
-    $("messageInput").placeholder="Message "+c.name;
-    if(c.kind==="group") {
-      const tools=el("div","empty-actions");
-      const add=el("button","secondary","Add group member");
-      add.addEventListener("click",()=>addGroupMember(c));
-      tools.append(add);
-      feed.append(tools);
+    function showStatus(message, error = false) {
+      statusBox.textContent = message;
+      statusBox.classList.toggle('error', error);
+      statusBox.style.display = 'block';
     }
-    const messages=currentMessages();
-    if(!messages.length) addWelcome(feed,c.kind==="group"?"Private group":"@"+c.name,
-      c.kind==="group"?"This is the beginning of your private group conversation.":"This is the beginning of your private conversation.");
-    messages.forEach(drawMessage.bind(null,feed));
-    return;
-  }
-  if(selected.type==="server") {
-    const server=currentServer();
-    if(!server) {state.selected={type:"home",id:""};drawAll();return;}
-    const channel=(server.channels||[]).find(ch=>ch.id===selected.channel);
-    $("topSymbol").textContent="#";
-    $("topTitle").textContent=channel?channel.name:server.name;
-    $("topSubtitle").textContent=server.name+" · Server channel";
-    if(!channel) {
-      addWelcome(feed,server.name,"Your server is ready. Create a channel to start.");
-      const b=el("button","primary","Create channel");
-      b.addEventListener("click",()=>createChannel(server));
-      feed.append(b);
-      return;
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const signup = mode === 'signup';
+      loginTab.classList.toggle('active', !signup);
+      signupTab.classList.toggle('active', signup);
+      usernameField.hidden = !signup;
+      usernameInput.required = signup;
+      passwordInput.autocomplete = signup
+        ? 'new-password' : 'current-password';
+      submitButton.textContent = signup
+        ? 'Create account' : 'Log in';
+      statusBox.style.display = 'none';
     }
-    $("composerWrap").hidden=false;
-    $("messageInput").placeholder="Message #"+channel.name;
-    const messages=currentMessages();
-    if(!messages.length) addWelcome(feed,"#"+channel.name,"This is the beginning of this channel.");
-    messages.forEach(drawMessage.bind(null,feed));
-  }
-}
-function drawMessage(feed,m) {
-  const row=el("article","message");
-  const a=el("div","small-avatar",avatar(m.author));
-  const content=el("div","msg-content");
-  const head=el("div","msg-head");
-  head.append(el("span","msg-author",m.author),el("span","msg-time",
-    new Date(m.time||Date.now()).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})));
-  content.append(head,el("div","msg-text",m.text));
-  row.append(a,content); feed.append(row);
-}
-function drawAll() {
-  $("myName").textContent=state.username;
-  $("myAvatar").textContent=avatar(state.username);
-  $("homeBtn").classList.toggle("active",state.selected.type==="home");
-  drawRail(); drawSidebar(); drawChat(); save();
-}
-function promptForm(title,fields,callback,description="") {
-  const backdrop=el("div","modal-bg");
-  const form=el("form","modal");
-  form.append(el("h2","",title));
-  if(description) form.append(el("p","",description));
-  const inputs={};
-  fields.forEach(f=>{
-    form.append(el("label","",f.label));
-    const input=el("input");
-    input.placeholder=f.placeholder||"";
-    input.maxLength=f.maxLength||80;
-    input.required=!!f.required;
-    input.autocomplete="off";
-    if(f.value) input.value=f.value;
-    inputs[f.key]=input; form.append(input);
-  });
-  const actions=el("div","modal-actions");
-  const cancel=el("button","cancel","Cancel"); cancel.type="button";
-  const submit=el("button","primary","Create"); submit.type="submit";
-  actions.append(cancel,submit);form.append(actions);backdrop.append(form);document.body.append(backdrop);
-  const close=()=>backdrop.remove();
-  cancel.addEventListener("click",close);
-  backdrop.addEventListener("click",e=>{if(e.target===backdrop)close();});
-  form.addEventListener("submit",e=>{
-    e.preventDefault();
-    const values={}; fields.forEach(f=>values[f.key]=inputs[f.key].value.trim());
-    if(fields.some(f=>f.required&&!values[f.key])) return;
-    if(callback(values)===false) return;
-    close();
-  });
-  inputs[fields[0].key].focus();
-}
-function addPerson() {
-  promptForm("Add a person",[
-    {key:"username",label:"Their ChickenTalk username",placeholder:"user73297492",required:true}
-  ],v=>{
-    const username=v.username.replace(/^@/,"");
-    if(username.toLowerCase()===state.username.toLowerCase()) {alert("That's your own username.");return false;}
-    if(!/^user\d{8}$/i.test(username)) {
-      alert("Enter a username in the format user73297492.");
-      return false;
+
+    loginTab.addEventListener('click', () => setMode('login'));
+    signupTab.addEventListener('click', () => setMode('signup'));
+
+    if (
+      SUPABASE_URL.startsWith('https://') &&
+      !SUPABASE_URL.includes('PASTE_') &&
+      !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_')
+    ) {
+      supabase = createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
     }
-    if(state.people.some(p=>p.toLowerCase()===username.toLowerCase())) {
-      alert("You've already added that username.");return false;
-    }
-    state.people.push(username);
-    const existing=state.conversations.find(c=>c.kind==="dm"&&c.peer.toLowerCase()===username.toLowerCase());
-    if(existing) state.selected={type:"chat",id:existing.id};
-    else {
-      const c={id:makeId("dm"),kind:"dm",name:username,peer:username};
-      state.conversations.push(c);state.selected={type:"chat",id:c.id};
-    }
-    drawAll();
-  },"This prototype checks the username format locally. A real account directory is needed to find users on other computers.");
-}
-function createGroup() {
-  promptForm("Create a private group",[
-    {key:"name",label:"Group name",placeholder:"Weekend plans",required:true},
-    {key:"members",label:"Member usernames (comma-separated)",placeholder:"user12345678, user87654321"}
-  ],v=>{
-    const members=[...new Set(v.members.split(",").map(s=>s.trim().replace(/^@/,"")).filter(Boolean))];
-    for(const username of members) {
-      if(!/^user\d{8}$/i.test(username)||username.toLowerCase()===state.username.toLowerCase()) {
-        alert("Each member must be another username in the format user12345678.");
-        return false;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!supabase) {
+        showStatus(
+          'Add your Supabase Project URL and publishable key in index.html first.',
+          true
+        );
+        return;
       }
-    }
-    const c={id:makeId("group"),kind:"group",name:v.name,members:[state.username,...members]};
-    state.conversations.push(c);
-    state.selected={type:"chat",id:c.id};
-    drawAll();
-  },"Create a private group conversation. In this prototype, participants are stored locally, not notified on other devices.");
-}
-function addGroupMember(c) {
-  promptForm("Add group member",[
-    {key:"username",label:"Username",placeholder:"user12345678",required:true}
-  ],v=>{
-    const name=v.username.replace(/^@/,"");
-    if(!/^user\d{8}$/i.test(name)||name.toLowerCase()===state.username.toLowerCase()) {
-      alert("Enter another username in the format user12345678.");return false;
-    }
-    if(!c.members.includes(name)) c.members.push(name);
-    if(!state.people.includes(name)) state.people.push(name);
-    drawAll();
-  });
-}
-function createServer() {
-  promptForm("Create a server",[
-    {key:"name",label:"Server name",placeholder:"My community",required:true}
-  ],v=>{
-    const server={id:makeId("server"),name:v.name,channels:[],members:[state.username]};
-    state.servers.push(server);
-    state.selected={type:"server",id:server.id,channel:""};
-    drawAll();
-  },"Create your own server. No servers are created automatically.");
-}
-function createChannel(server) {
-  promptForm("Create a channel",[
-    {key:"name",label:"Channel name",placeholder:"general",required:true}
-  ],v=>{
-    const name=v.name.toLowerCase().replace(/[^a-z0-9-_ ]/g,"").trim().replace(/\s+/g,"-");
-    if(!name) {alert("Enter a channel name.");return false;}
-    if(server.channels.some(c=>c.name===name)) {alert("That channel already exists.");return false;}
-    const channel={id:makeId("channel"),name};
-    server.channels.push(channel);
-    state.selected={type:"server",id:server.id,channel:channel.id};
-    drawAll();
-  });
-}
-$("messageForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const text=$("messageInput").value.trim();
-  if(!text)return;
-  if(state.selected.type==="home")return;
-  currentMessages().push({id:makeId("message"),author:state.username,text,time:Date.now()});
-  $("messageInput").value="";
-  $("messageInput").style.height="auto";
-  drawChat(); save();
-});
-$("messageInput").addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("messageForm").requestSubmit();}
-});
-$("messageInput").addEventListener("input",e=>{
-  e.target.style.height="auto";
-  e.target.style.height=Math.min(e.target.scrollHeight,130)+"px";
-});
-$("homeBtn").addEventListener("click",()=>{
-  state.selected={type:"home",id:""};drawAll();
-});
-$("newDMBtn").addEventListener("click",addPerson);
-$("addPersonTop").addEventListener("click",addPerson);
-$("groupTop").addEventListener("click",createGroup);
-$("newServerBtn").addEventListener("click",createServer);
-$("editName").addEventListener("click",()=>{
-  promptForm("Change username",[
-    {key:"username",label:"New username",placeholder:"user12345678",value:state.username,required:true}
-  ],v=>{
-    if(!/^user\d{8}$/i.test(v.username)){alert("Use the format user12345678.");return false;}
-    state.username=v.username;drawAll();
-  },"This changes the local display identity only.");
-});
-$("sidebarMenu").addEventListener("click",()=>{
-  if(state.selected.type==="server") {
-    const server=currentServer();
-    if(server&&confirm("Delete the local server “"+server.name+"” and its saved messages?")) {
-      state.servers=state.servers.filter(s=>s.id!==server.id);
-      delete state.messages[server.id];
-      state.selected={type:"home",id:""};drawAll();
-    }
-  } else {
-    alert("Add people, create private group chats, or make a server using the + buttons.");
-  }
-});
-$("toggleSidebar").addEventListener("click",()=>{
-  const sidebar=$("sidebar");
-  if(innerWidth<=650) sidebar.classList.toggle("mobile-open");
-  else sidebar.style.display=getComputedStyle(sidebar).display==="none"?"flex":"none";
-});
-drawAll();
-})();
-</script>
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      submitButton.disabled = true;
+
+      try {
+        if (mode === 'signup') {
+          const username = usernameInput.value.trim();
+
+          if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) {
+            showStatus(
+              'Username must be 3–24 characters using letters, numbers, or underscores.',
+              true
+            );
+            return;
+          }
+
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password
+          });
+
+          if (error) throw error;
+
+          if (data.user && data.session) {
+            showStatus(
+              'Account created! Username registration still needs the secure backend function before your profile is saved.'
+            );
+          } else {
+            showStatus(
+              'Check your email for the confirmation link. Username registration still needs the secure backend function.'
+            );
+          }
+        } else {
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) throw error;
+
+          showStatus(
+            'Logged in successfully. The chat interface and profile loading still need to be connected.'
+          );
+        }
+      } catch (error) {
+        showStatus(error.message || 'Something went wrong.', true);
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
