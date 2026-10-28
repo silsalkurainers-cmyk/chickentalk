@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,14 +33,12 @@ button:focus-visible, input:focus-visible {
 }
 .hidden { display: none !important; }
 
-/* Account screen */
 #authScreen {
   height: 100vh;
   display: grid;
   place-items: center;
   padding: 20px;
-  background:
-    radial-gradient(ellipse at 50% 10%, #151515 0%, #080808 48%, #030303 100%);
+  background: radial-gradient(ellipse at 50% 10%, #151515 0%, #080808 48%, #030303 100%);
 }
 .auth-card {
   width: min(420px, 100%);
@@ -122,7 +119,6 @@ button:focus-visible, input:focus-visible {
 }
 #authMessage:empty { display: none; }
 
-/* Main application */
 #app {
   height: 100vh;
   display: grid;
@@ -243,7 +239,7 @@ button:focus-visible, input:focus-visible {
   position: relative;
 }
 .topbar {
-  height: 60px;
+  min-height: 60px;
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -254,16 +250,18 @@ button:focus-visible, input:focus-visible {
 .topbar h2 { margin: 0; font-size: 15px; }
 .topbar .topic { color: #777; }
 .topbar-spacer { flex: 1; }
-#dogButton {
+#dogButton, #catButton {
   padding: 8px 13px;
   border: 1px solid #353535;
   border-radius: 8px;
   background: #181818;
   color: white;
   font-weight: 800;
+  white-space: nowrap;
 }
-#dogButton:hover { background: #292929; }
-#dogButton:active { transform: scale(.97); }
+#dogButton:hover, #catButton:hover { background: #292929; }
+#dogButton:active, #catButton:active { transform: scale(.97); }
+
 .content {
   flex: 1;
   min-height: 0;
@@ -347,15 +345,19 @@ button:focus-visible, input:focus-visible {
   #app { grid-template-columns: 54px 155px minmax(0,1fr); }
   .rail-logo, .rail-button { width: 38px; height: 38px; }
   .content { padding: 17px; }
-  .topbar { padding: 0 12px; }
+  .topbar { padding: 0 12px; gap: 7px; }
   .sidebar-head { padding: 0 10px; }
   .footer-credit { font-size: 9px; }
+  #dogButton, #catButton { padding: 7px 8px; font-size: 12px; }
 }
 @media (max-width: 480px) {
   #app { grid-template-columns: 48px minmax(0,1fr); }
   .sidebar { display: none; }
   .rail { grid-column: 1; }
   .main { grid-column: 2; }
+  .topbar { gap: 5px; }
+  .topbar .topic { display: none; }
+  #dogButton, #catButton { padding: 7px 6px; font-size: 11px; }
 }
 </style>
 </head>
@@ -386,8 +388,8 @@ button:focus-visible, input:focus-visible {
         <button class="primary" type="submit">Log In</button>
       </form>
       <div class="auth-links">
-        <button class="text-button" id="showSignup">Create account</button>
-        <button class="text-button" id="showReset">Forgot password?</button>
+        <button class="text-button" id="showSignup" type="button">Create account</button>
+        <button class="text-button" id="showReset" type="button">Forgot password?</button>
       </div>
     </div>
 
@@ -412,7 +414,7 @@ button:focus-visible, input:focus-visible {
         <button class="primary" type="submit">Create Account</button>
       </form>
       <div class="auth-links">
-        <button class="text-button" id="showLogin1">Back to login</button>
+        <button class="text-button" id="showLogin1" type="button">Back to login</button>
       </div>
     </div>
 
@@ -427,7 +429,7 @@ button:focus-visible, input:focus-visible {
         <button class="primary" type="submit">Send Reset Email</button>
       </form>
       <div class="auth-links">
-        <button class="text-button" id="showLogin2">Back to login</button>
+        <button class="text-button" id="showLogin2" type="button">Back to login</button>
       </div>
     </div>
     <div id="authMessage" role="status" aria-live="polite"></div>
@@ -472,6 +474,7 @@ button:focus-visible, input:focus-visible {
       <span class="topic" id="topTopic">/ your space</span>
       <div class="topbar-spacer"></div>
       <button id="dogButton" type="button">DOG 🐕</button>
+      <button id="catButton" type="button">CAT 🐈</button>
     </header>
     <div class="content" id="mainContent"></div>
   </main>
@@ -484,11 +487,6 @@ button:focus-visible, input:focus-visible {
 import { createClient } from
   'https://esm.sh/@supabase/supabase-js@2';
 
-/*
-  Keep your existing project credentials here.
-  The publishable/anon key is intended for browser clients.
-  Never put a service_role or secret key in this file.
-*/
 const SUPABASE_URL = 'https://emxsxlkekskmubvyfgag.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
 
@@ -577,15 +575,13 @@ $('signup').addEventListener('submit', async event => {
   }
 
   try {
-    
-const { data, error } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: { username },
-    emailRedirectTo: 'chickentalk://auth/callback'
-  }
-});
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username }
+      }
+    });
 
     if (error) throw error;
 
@@ -595,7 +591,7 @@ const { data, error } = await supabase.auth.signUp({
       switchAuthForm('login');
       $('loginEmail').value = email;
       message(
-        'Account created. Check your email for the confirmation link, then return here and log in.',
+        'Account created. Please log in with your email and password. If email confirmation is enabled in Supabase, you must confirm your email first.',
         'success'
       );
     }
@@ -639,11 +635,9 @@ async function loadProfile(user) {
     .maybeSingle();
 
   if (error) throw error;
-
   if (data) return data;
 
-  const username = String(user.user_metadata?.username || '')
-    .toLowerCase();
+  const username = String(user.user_metadata?.username || '').toLowerCase();
 
   if (!/^[a-z0-9_]{3,24}$/.test(username)) {
     throw new Error(
@@ -675,10 +669,7 @@ async function enterApp(user) {
   } catch (error) {
     $('authScreen').classList.remove('hidden');
     $('app').classList.add('hidden');
-    message(
-      'Signed in, but profile loading failed: ' + error.message,
-      'error'
-    );
+    message('Signed in, but profile loading failed: ' + error.message, 'error');
     return;
   }
 
@@ -780,8 +771,7 @@ async function renderFriends() {
   setContent(`
     <h2 id="panelTitle">Direct Messages</h2>
     <p class="panel-description">Find ChickenTalk users by username.</p>
-    <input class="panel-input" id="userSearch" placeholder="Search username…"
-           maxlength="24">
+    <input class="panel-input" id="userSearch" placeholder="Search username…" maxlength="24">
     <button class="panel-action" id="searchUsers">Search</button>
     <div class="status" id="friendsStatus"></div>
     <div class="result-list" id="userResults"></div>
@@ -878,6 +868,7 @@ async function loadServers() {
       row.append(label);
       list.append(row);
     }
+
     if (!data?.length) {
       list.innerHTML = '<p class="empty-note">No servers yet.</p>';
     }
@@ -985,8 +976,7 @@ async function saveProfile(event) {
       (display_name || username).slice(0, 1).toUpperCase();
     $('profileStatus').textContent = 'Profile saved.';
   } catch (error) {
-    $('profileStatus').textContent =
-      'Could not save: ' + error.message;
+    $('profileStatus').textContent = 'Could not save: ' + error.message;
   }
 }
 
@@ -1066,6 +1056,57 @@ $('dogButton').addEventListener('click', async () => {
   } catch {
     dogMessage.textContent = 'WOOF! (Audio unavailable)';
     setTimeout(() => dogMessage.textContent = '', 1800);
+  }
+});
+
+/* CAT button: synthesize a short meow using the browser audio engine. */
+$('catButton').addEventListener('click', async () => {
+  const catMessage = $('dogMessage');
+  catMessage.textContent = 'MEOW!';
+
+  try {
+    const AudioContextClass =
+      window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error('Audio unavailable');
+
+    const audio = new AudioContextClass();
+    await audio.resume();
+
+    const now = audio.currentTime;
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const filter = audio.createBiquadFilter();
+
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(650, now);
+    oscillator.frequency.exponentialRampToValueAtTime(420, now + 0.18);
+    oscillator.frequency.exponentialRampToValueAtTime(780, now + 0.38);
+    oscillator.frequency.exponentialRampToValueAtTime(520, now + 0.65);
+
+    filter.type = 'lowpass';
+    filter.frequency.value = 1400;
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.04);
+    gain.gain.setValueAtTime(0.13, now + 0.25);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+
+    oscillator.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.72);
+
+    setTimeout(() => {
+      audio.close();
+      catMessage.textContent = '';
+    }, 850);
+  } catch {
+    catMessage.textContent = 'MEOW! (Audio unavailable)';
+    setTimeout(() => {
+      catMessage.textContent = '';
+    }, 1800);
   }
 });
 </script>
