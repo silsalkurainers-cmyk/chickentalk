@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,226 +8,130 @@
 <style>
 :root {
   color-scheme: dark;
-  --bg:#050505; --panel:#0b0b0d; --panel2:#111114;
-  --panel3:#19191d; --line:#252529; --text:#f4f4f5;
-  --muted:#92929b; --green:#42c77a;
+  --bg:#050505;
+  --panel:#0b0b0d;
+  --panel2:#111114;
+  --line:#252529;
+  --text:#f4f4f5;
+  --muted:#92929b;
+  --green:#42c77a;
 }
-* { box-sizing:border-box }
-body {
-  margin:0; height:100vh; overflow:hidden; background:var(--bg);
-  color:var(--text); font:14px Inter,system-ui,-apple-system,sans-serif;
+*{box-sizing:border-box}
+body{margin:0;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font:14px Inter,system-ui,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hidden{display:none!important}
+button{transition:background .15s,border-color .15s}
+#authScreen{height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 10%,#151515,#080808 48%,#030303)}
+.auth-card{width:min(420px,100%);padding:32px;border:1px solid #292929;border-radius:16px;background:#0b0b0b;box-shadow:0 20px 80px #000a}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.brand-icon{width:44px;height:44px;display:grid;place-items:center;background:#171717;border:1px solid #303030;border-radius:13px;font-size:24px}
+.brand h1{margin:0;font-size:23px;letter-spacing:-.8px}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.auth-card h2{margin:0 0 8px;font-size:23px}
+.sub{margin:0 0 24px;color:var(--muted);line-height:1.5}
+.field{margin-bottom:15px}
+.field label{display:block;margin-bottom:7px;color:#d4d4d8;font-size:12px;font-weight:700}
+.field input,.field textarea{width:100%;padding:12px 13px;color:white;background:#050505;border:1px solid #303035;border-radius:8px}
+.primary{width:100%;padding:12px;border:1px solid #343434;border-radius:8px;background:#eee;color:#080808;font-weight:750}
+.primary:hover{background:#d8d8d8}
+.auth-links{display:flex;justify-content:space-between;gap:12px;margin-top:17px}
+.text-button{border:0;background:none;color:#b5b5bd;padding:0}
+.text-button:hover{color:white}
+#authMessage{margin-top:16px;padding:11px;border:1px solid #303030;border-radius:8px;color:#ddd;line-height:1.45;overflow-wrap:anywhere}
+#authMessage:empty{display:none}
+#app{height:100vh;display:grid;grid-template-columns:68px 225px minmax(0,1fr)}
+.rail{background:#050505;border-right:1px solid var(--line);display:flex;align-items:center;flex-direction:column;gap:12px;padding:14px 0}
+.rail-logo,.rail-button{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;border:1px solid transparent;background:#121214;color:#bdbdc5;font-size:19px}
+.rail-logo{background:#202020;color:white;font-size:23px}
+.rail-button:hover,.rail-button.active{background:#252525;color:white;border-color:#383838}
+.rail-spacer{flex:1}
+.sidebar{min-width:0;background:#090909;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.sidebar-head{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 17px;border-bottom:1px solid var(--line);font-weight:800}
+.sidebar-head button,.small-button{border:1px solid #292929;border-radius:7px;background:#151515;color:#ddd;padding:7px 10px}
+.section-label{padding:22px 13px 8px;color:#777780;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.side-item{margin:2px 8px;padding:10px;display:flex;align-items:center;gap:10px;text-align:left;border:1px solid transparent;border-radius:7px;background:transparent;color:#aaaab3}
+.side-item:hover,.side-item.active{background:#191919;color:white}
+.side-item .symbol{width:19px;text-align:center;color:#777}
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;min-width:0;background:#080808}
+.avatar{width:34px;height:34px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;background:#242424;border:1px solid #3b3b3b;font-weight:800;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-label{flex:1;min-width:0}
+.user-label strong,.user-label span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-label strong{font-size:12px}
+.user-label span{margin-top:3px;color:var(--muted);font-size:10px}
+#logoutButton{border:0;background:transparent;color:#aaa;padding:7px}
+.main{min-width:0;min-height:0;display:flex;flex-direction:column;background:#080808;position:relative}
+.topbar{min-height:60px;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line)}
+.topbar h2{margin:0;font-size:15px}
+.topbar .topic{color:#777}
+.topbar-spacer{flex:1}
+#dogButton,#catButton{padding:8px 13px;border:1px solid #353535;border-radius:8px;background:#181818;color:white;font-weight:800;white-space:nowrap}
+#dogButton:hover,#catButton:hover{background:#292929}
+.content{flex:1;min-height:0;overflow-y:auto;padding:26px}
+.welcome{min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.welcome-logo{width:86px;height:86px;display:grid;place-items:center;background:#151515;border:1px solid #343434;border-radius:26px;font-size:42px;margin-bottom:22px}
+.welcome h1{margin:0 0 10px;font-size:clamp(25px,4vw,38px);letter-spacing:-1.2px}
+.welcome p{max-width:430px;color:var(--muted);line-height:1.7}
+#panelTitle{font-size:22px;margin:0 0 8px}
+.panel-description{color:var(--muted);margin:0 0 20px;line-height:1.5}
+.panel-input{width:100%;padding:12px;background:#050505;border:1px solid #303035;border-radius:8px;color:white;margin-bottom:10px}
+.panel-action{padding:10px 14px;background:#e8e8e8;color:black;border:0;border-radius:8px;font-weight:700}
+.panel-action:hover{background:#ccc}
+.result-list{margin-top:20px}
+.result-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #222}
+.result-item span{overflow-wrap:anywhere;min-width:0}
+.status{color:#aaa;margin-top:15px;line-height:1.5;overflow-wrap:anywhere}
+.empty-note{color:#73737c;margin-top:30px;text-align:center}
+.card{padding:16px;border:1px solid #262626;border-radius:12px;background:#0d0d0f;margin-bottom:14px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row>*{max-width:100%}
+.profile-top{display:flex;gap:16px;align-items:center;margin-bottom:20px}
+.big-avatar{width:76px;height:76px;border-radius:50%;background:#202020;border:1px solid #444;display:grid;place-items:center;overflow:hidden;font-size:25px;font-weight:800}
+.big-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-name{font-size:22px;font-weight:800}
+.muted{color:var(--muted)}
+.chat-layout{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);height:100%;min-height:400px;border:1px solid #252529;border-radius:10px;overflow:hidden}
+.chat-list{background:#090909;border-right:1px solid #252529;overflow-y:auto;padding:10px}
+.chat-choice{display:block;width:100%;text-align:left;padding:10px;border:1px solid transparent;border-radius:7px;background:transparent;color:#ddd;margin-bottom:4px;overflow-wrap:anywhere}
+.chat-choice:hover,.chat-choice.active{background:#1b1b1e;border-color:#303034}
+.chat-window{display:flex;flex-direction:column;min-width:0;min-height:0}
+.chat-heading{padding:14px;border-bottom:1px solid #252529;font-weight:800}
+.chat-messages{flex:1;min-height:200px;overflow-y:auto;padding:14px}
+.chat-message{padding:10px 0;border-bottom:1px solid #18181b;overflow-wrap:anywhere}
+.chat-message strong{margin-right:8px}
+.chat-message time{font-size:10px;color:#777}
+.chat-compose{display:flex;gap:8px;padding:12px;border-top:1px solid #252529}
+.chat-compose input{flex:1;min-width:0;padding:11px;background:#050505;border:1px solid #303035;border-radius:8px;color:white}
+.chat-compose button{padding:10px 13px;border:0;border-radius:8px;background:#e8e8e8;color:#000;font-weight:700}
+.server-layout{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);min-height:360px;border:1px solid #252529;border-radius:10px;overflow:hidden}
+.server-nav{padding:10px;background:#090909;border-right:1px solid #252529}
+.server-nav h3{font-size:12px;color:#888;padding:5px}
+.server-nav button{width:100%;display:block;text-align:left;padding:9px;border:0;border-radius:7px;background:transparent;color:#ccc;overflow-wrap:anywhere}
+.server-nav button:hover,.server-nav button.active{background:#202023;color:white}
+.server-main{padding:16px;min-width:0}
+.server-main .chat-messages{height:270px;min-height:200px;padding:8px}
+.footer-credit{position:fixed;right:15px;bottom:10px;z-index:4;color:#626269;font-size:10px;pointer-events:none}
+#dogMessage{position:fixed;left:82px;bottom:12px;z-index:5;color:#d5d5d5;font-size:11px;pointer-events:none}
+#dogMessage:empty{display:none}
+hr{border:0;border-top:1px solid #252529;margin:20px 0}
+@media(max-width:700px){
+#app{grid-template-columns:54px 155px minmax(0,1fr)}
+.rail-logo,.rail-button{width:38px;height:38px}
+.content{padding:17px}.topbar{padding:0 12px;gap:7px}
+.sidebar-head{padding:0 10px}
+#dogButton,#catButton{padding:7px 8px;font-size:12px}
+.chat-layout,.server-layout{grid-template-columns:125px minmax(0,1fr)}
 }
-button,input,textarea { font:inherit }
-button { cursor:pointer }
-button:focus-visible,input:focus-visible,textarea:focus-visible {
-  outline:2px solid var(--green); outline-offset:2px;
-}
-.hidden { display:none!important }
-button:disabled { opacity:.5; cursor:wait }
-#authScreen {
-  height:100vh; display:grid; place-items:center; padding:20px;
-  background:radial-gradient(ellipse at 50% 10%,#151515,#080808 48%,#030303);
-}
-.auth-card {
-  width:min(420px,100%); padding:32px; border:1px solid #292929;
-  border-radius:16px; background:#0b0b0b; box-shadow:0 20px 80px #000a;
-}
-.brand { display:flex; align-items:center; gap:12px; margin-bottom:28px }
-.brand-icon {
-  width:44px; height:44px; display:grid; place-items:center;
-  background:#171717; border:1px solid #303030; border-radius:13px;
-  font-size:24px;
-}
-.brand h1 { margin:0; font-size:23px; letter-spacing:-.8px }
-.brand p { margin:3px 0 0; color:var(--muted); font-size:12px }
-.auth-card h2 { margin:0 0 8px; font-size:23px }
-.sub { margin:0 0 24px; color:var(--muted); line-height:1.5 }
-.field { margin-bottom:15px }
-.field label {
-  display:block; margin-bottom:7px; color:#d4d4d8;
-  font-size:12px; font-weight:700;
-}
-.field input,.field textarea {
-  width:100%; padding:12px 13px; color:white; background:#050505;
-  border:1px solid #303035; border-radius:8px;
-}
-.field input:focus,.field textarea:focus { border-color:#555; outline:none }
-.primary {
-  width:100%; padding:12px; border:1px solid #343434; border-radius:8px;
-  background:#eee; color:#080808; font-weight:750;
-}
-.primary:hover { background:#d8d8d8 }
-.auth-links { display:flex; justify-content:space-between; gap:12px; margin-top:17px }
-.text-button { border:0; background:none; color:#b5b5bd; padding:0 }
-.text-button:hover { color:white }
-#authMessage {
-  margin-top:16px; padding:11px; border:1px solid #303030;
-  border-radius:8px; color:#ddd; line-height:1.45; overflow-wrap:anywhere;
-}
-#authMessage:empty { display:none }
-#app { height:100vh; display:grid; grid-template-columns:68px 225px minmax(0,1fr) }
-.rail {
-  background:#050505; border-right:1px solid var(--line);
-  display:flex; align-items:center; flex-direction:column; gap:12px; padding:14px 0;
-}
-.rail-logo,.rail-button {
-  width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
-  border:1px solid transparent; background:#121214; color:#bdbdc5; font-size:19px;
-}
-.rail-logo { background:#202020; color:white; font-size:23px }
-.rail-button:hover,.rail-button.active { background:#252525; color:white; border-color:#383838 }
-.rail-spacer { flex:1 }
-.sidebar {
-  min-width:0; background:#090909; border-right:1px solid var(--line);
-  display:flex; flex-direction:column; overflow:hidden;
-}
-.sidebar-head {
-  min-height:60px; display:flex; align-items:center; justify-content:space-between;
-  padding:0 17px; border-bottom:1px solid var(--line); font-weight:800;
-}
-.sidebar-head button,.small-button {
-  border:1px solid #292929; border-radius:7px; background:#151515;
-  color:#ddd; padding:6px 9px;
-}
-.section-label {
-  padding:22px 13px 8px; color:#777780; font-size:10px;
-  font-weight:800; letter-spacing:1.2px;
-}
-.side-item {
-  margin:2px 8px; padding:10px; display:flex; align-items:center; gap:10px;
-  text-align:left; border:1px solid transparent; border-radius:7px;
-  background:transparent; color:#aaaab3;
-}
-.side-item:hover,.side-item.active { background:#191919; color:white }
-.side-item .symbol { width:19px; text-align:center; color:#777 }
-.sidebar-bottom {
-  margin-top:auto; padding:12px; border-top:1px solid var(--line);
-  display:flex; align-items:center; gap:10px; min-width:0; background:#080808;
-}
-.avatar {
-  width:34px; height:34px; flex:0 0 auto; border-radius:50%;
-  display:grid; place-items:center; background:#242424; border:1px solid #3b3b3b;
-  font-weight:800;
-}
-.user-label { flex:1; min-width:0 }
-.user-label strong,.user-label span {
-  display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.user-label strong { font-size:12px }
-.user-label span { margin-top:3px; color:var(--muted); font-size:10px }
-#logoutButton { border:0; background:transparent; color:#aaa; padding:7px }
-.main {
-  min-width:0; min-height:0; display:flex; flex-direction:column;
-  background:#080808; position:relative;
-}
-.topbar {
-  min-height:60px; flex:0 0 auto; display:flex; align-items:center; gap:12px;
-  padding:0 20px; border-bottom:1px solid var(--line);
-}
-.topbar h2 { margin:0; font-size:15px }
-.topbar .topic { color:#777 }
-.topbar-spacer { flex:1 }
-#dogButton,#catButton {
-  padding:8px 13px; border:1px solid #353535; border-radius:8px;
-  background:#181818; color:white; font-weight:800; white-space:nowrap;
-}
-#dogButton:hover,#catButton:hover { background:#292929 }
-.content { flex:1; min-height:0; overflow-y:auto; padding:26px }
-.welcome {
-  min-height:100%; display:flex; flex-direction:column; justify-content:center;
-  align-items:center; text-align:center;
-}
-.welcome-logo {
-  width:86px; height:86px; display:grid; place-items:center; background:#151515;
-  border:1px solid #343434; border-radius:26px; font-size:42px; margin-bottom:22px;
-}
-.welcome h1 { margin:0 0 10px; font-size:clamp(25px,4vw,38px); letter-spacing:-1.2px }
-.welcome p { max-width:390px; color:var(--muted); line-height:1.7 }
-.welcome .small-button { margin-top:12px; padding:11px 16px }
-#panelTitle { font-size:22px; margin:0 0 8px }
-.panel-description { color:var(--muted); margin:0 0 20px; line-height:1.5 }
-.panel-input {
-  width:100%; padding:12px; background:#050505; border:1px solid #303035;
-  border-radius:8px; color:white; margin-bottom:10px;
-}
-.panel-action {
-  padding:10px 14px; background:#e8e8e8; color:black; border:0;
-  border-radius:8px; font-weight:700;
-}
-.panel-action:hover { background:#d0d0d0 }
-.result-list { margin-top:20px }
-.result-item {
-  display:flex; justify-content:space-between; align-items:center; gap:10px;
-  padding:13px 0; border-bottom:1px solid #222;
-}
-.result-item span { overflow-wrap:anywhere; min-width:0 }
-.status { color:#aaa; margin-top:15px; line-height:1.5; overflow-wrap:anywhere }
-.empty-note { color:#73737c; margin-top:30px; text-align:center }
-.tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px }
-.tab {
-  padding:8px 12px; border:1px solid #303030; border-radius:8px;
-  background:#111; color:#bbb;
-}
-.tab.active { background:#242424; color:white; border-color:#555 }
-.split {
-  display:grid; grid-template-columns:minmax(160px,230px) minmax(0,1fr);
-  gap:20px; min-height:300px;
-}
-.list-panel { border-right:1px solid #252525; padding-right:14px; min-width:0 }
-.list-button {
-  width:100%; display:block; text-align:left; padding:10px;
-  margin-bottom:5px; border:1px solid transparent; border-radius:7px;
-  background:transparent; color:#aaa; overflow-wrap:anywhere;
-}
-.list-button:hover,.list-button.active { background:#191919; color:white }
-.chat-panel { display:flex; flex-direction:column; min-height:400px; min-width:0 }
-.chat-heading { padding:0 0 14px; border-bottom:1px solid #252525; margin-bottom:12px }
-.chat-heading h3 { margin:0 0 5px; font-size:16px }
-.chat-heading p { margin:0; color:#888; font-size:12px }
-.chat-messages {
-  flex:1; min-height:180px; max-height:calc(100vh - 310px); overflow-y:auto;
-  display:flex; flex-direction:column; gap:10px; padding:8px 0 16px;
-}
-.chat-message { padding:10px 12px; border:1px solid #252525; border-radius:8px; background:#101010 }
-.chat-message strong { font-size:12px; color:var(--green) }
-.chat-message time { font-size:10px; color:#777; margin-left:8px }
-.chat-message p { margin:7px 0 0; white-space:pre-wrap; overflow-wrap:anywhere }
-.chat-compose { display:flex; gap:8px; padding-top:12px; border-top:1px solid #252525 }
-.chat-compose input { flex:1; min-width:0; margin:0 }
-.chat-compose button { flex:0 0 auto }
-.inline-form { display:flex; gap:8px; align-items:center; margin-bottom:10px }
-.inline-form input { flex:1; min-width:0; margin:0 }
-.muted { color:#888 }
-.footer-credit {
-  position:fixed; right:15px; bottom:10px; z-index:4;
-  color:#626269; font-size:10px; pointer-events:none;
-}
-#dogMessage {
-  position:fixed; left:82px; bottom:12px; z-index:5;
-  color:#d5d5d5; font-size:11px; pointer-events:none;
-}
-#dogMessage:empty { display:none }
-@media(max-width:700px) {
-  #app { grid-template-columns:54px 155px minmax(0,1fr) }
-  .rail-logo,.rail-button { width:38px; height:38px }
-  .content { padding:17px }
-  .topbar { padding:0 12px; gap:7px }
-  .sidebar-head { padding:0 10px }
-  .footer-credit { font-size:9px }
-  #dogButton,#catButton { padding:7px 8px; font-size:12px }
-  .split { grid-template-columns:140px minmax(0,1fr); gap:10px }
-}
-@media(max-width:480px) {
-  #app { grid-template-columns:48px minmax(0,1fr) }
-  .sidebar { display:none }
-  .rail { grid-column:1 }
-  .main { grid-column:2 }
-  .topbar { gap:5px }
-  .topbar .topic { display:none }
-  #dogButton,#catButton { padding:7px 6px; font-size:11px }
-  .split { grid-template-columns:1fr }
-  .list-panel { border-right:0; border-bottom:1px solid #252525; padding:0 0 12px }
-  .chat-messages { max-height:45vh }
+@media(max-width:480px){
+#app{grid-template-columns:48px minmax(0,1fr)}
+.sidebar{display:none}.main{grid-column:2}
+.topbar{gap:5px}.topbar .topic{display:none}
+#dogButton,#catButton{padding:7px 6px;font-size:11px}
+.chat-layout,.server-layout{grid-template-columns:100px minmax(0,1fr)}
+.chat-compose{flex-wrap:wrap}
 }
 </style>
 </head>
@@ -243,30 +148,19 @@ button:disabled { opacity:.5; cursor:wait }
       <h2>Welcome back</h2>
       <p class="sub">Sign in to continue to ChickenTalk.</p>
       <form id="login">
-        <div class="field"><label for="loginEmail">EMAIL</label>
-          <input id="loginEmail" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="loginPassword">PASSWORD</label>
-          <input id="loginPassword" type="password" autocomplete="current-password" required></div>
+        <div class="field"><label for="loginEmail">EMAIL</label><input id="loginEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="loginPassword">PASSWORD</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
         <button class="primary" type="submit">Log In</button>
       </form>
-      <div class="auth-links">
-        <button class="text-button" id="showSignup" type="button">Create account</button>
-        <button class="text-button" id="showReset" type="button">Forgot password?</button>
-      </div>
+      <div class="auth-links"><button class="text-button" id="showSignup" type="button">Create account</button><button class="text-button" id="showReset" type="button">Forgot password?</button></div>
     </div>
 
     <div id="signupForm" class="hidden">
-      <h2>Create an account</h2>
-      <p class="sub">Pick a username and join ChickenTalk.</p>
+      <h2>Create an account</h2><p class="sub">Choose a username and join ChickenTalk.</p>
       <form id="signup">
-        <div class="field"><label for="signupUsername">USERNAME</label>
-          <input id="signupUsername" minlength="3" maxlength="24"
-            pattern="[A-Za-z0-9_]{3,24}" autocomplete="username" required></div>
-        <div class="field"><label for="signupEmail">EMAIL</label>
-          <input id="signupEmail" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="signupPassword">PASSWORD (MINIMUM 8 CHARACTERS)</label>
-          <input id="signupPassword" type="password" minlength="8"
-            autocomplete="new-password" required></div>
+        <div class="field"><label for="signupUsername">USERNAME</label><input id="signupUsername" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" autocomplete="username" required></div>
+        <div class="field"><label for="signupEmail">EMAIL</label><input id="signupEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="signupPassword">PASSWORD (MINIMUM 8 CHARACTERS)</label><input id="signupPassword" type="password" minlength="8" autocomplete="new-password" required></div>
         <button class="primary" type="submit">Create Account</button>
       </form>
       <div class="auth-links"><button class="text-button" id="showLogin1" type="button">Back to login</button></div>
@@ -274,11 +168,7 @@ button:disabled { opacity:.5; cursor:wait }
 
     <div id="resetForm" class="hidden">
       <h2>Reset password</h2><p class="sub">Request a password reset email.</p>
-      <form id="reset">
-        <div class="field"><label for="resetEmail">EMAIL</label>
-          <input id="resetEmail" type="email" autocomplete="email" required></div>
-        <button class="primary" type="submit">Send Reset Email</button>
-      </form>
+      <form id="reset"><div class="field"><label for="resetEmail">EMAIL</label><input id="resetEmail" type="email" autocomplete="email" required></div><button class="primary" type="submit">Send Reset Email</button></form>
       <div class="auth-links"><button class="text-button" id="showLogin2" type="button">Back to login</button></div>
     </div>
     <div id="authMessage" role="status" aria-live="polite"></div>
@@ -289,7 +179,7 @@ button:disabled { opacity:.5; cursor:wait }
   <nav class="rail">
     <button class="rail-logo" title="ChickenTalk home" data-view="home">🐔</button>
     <button class="rail-button active" title="Home" data-view="home">⌂</button>
-    <button class="rail-button" title="Direct messages" data-view="friends">✉</button>
+    <button class="rail-button" title="Friends and messages" data-view="friends">✉</button>
     <button class="rail-button" title="Servers" data-view="servers">▦</button>
     <div class="rail-spacer"></div>
     <button class="rail-button" title="My profile" data-view="profile">●</button>
@@ -298,12 +188,12 @@ button:disabled { opacity:.5; cursor:wait }
   <aside class="sidebar">
     <div class="sidebar-head"><span>ChickenTalk</span><button id="sidebarAdd" title="Create">+</button></div>
     <div class="section-label">YOUR SPACE</div>
-    <button class="side-item active" data-view="home"><span class="symbol">⌂</span> Home</button>
-    <button class="side-item" data-view="friends"><span class="symbol">✉</span> Direct Messages</button>
+    <button class="side-item active" data-view="home"><span class="symbol">⌂</span>Home</button>
+    <button class="side-item" data-view="friends"><span class="symbol">✉</span>Friends & DMs</button>
     <div class="section-label">COMMUNITY</div>
-    <button class="side-item" data-view="servers"><span class="symbol">▦</span> Servers</button>
+    <button class="side-item" data-view="servers"><span class="symbol">▦</span>Servers</button>
     <div class="section-label">PERSONAL</div>
-    <button class="side-item" data-view="profile"><span class="symbol">●</span> My Profile</button>
+    <button class="side-item" data-view="profile"><span class="symbol">●</span>My Profile</button>
     <div class="sidebar-bottom">
       <div class="avatar" id="userAvatar">?</div>
       <div class="user-label"><strong id="sidebarUsername">Loading...</strong><span>Online</span></div>
@@ -332,865 +222,991 @@ const SUPABASE_URL = 'https://emxsxlkekskmubvyfgag.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_KkXFVpA6VSmFBWDVacgi0w_K4EsFMdN';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
 });
 
 const $ = id => document.getElementById(id);
 const state = {
-  user:null, profile:null, view:'home', busy:false,
-  conversations:[], currentConversation:null, conversationChannel:null,
-  servers:[], currentServer:null, channels:[], currentChannel:null,
-  serverChannel:null, serverTab:'channels'
+  user: null,
+  profile: null,
+  view: 'home',
+  busy: false,
+  conversation: null,
+  server: null,
+  channel: null,
+  refreshTimer: null
 };
 
-function safe(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  })[c]);
+function message(text, kind = 'info') {
+  const el = $('authMessage');
+  el.textContent = text || '';
+  el.style.borderColor = kind === 'error' ? '#7d3030' : kind === 'success' ? '#315b3f' : '#303030';
 }
-function setContent(html) { $('mainContent').innerHTML = html; }
-function setStatus(id,text) { const el=$(id); if(el) el.textContent=text||''; }
-function message(text,kind='info') {
-  $('authMessage').textContent=text||'';
-  $('authMessage').style.borderColor =
-    kind==='error'?'#7d3030':kind==='success'?'#315b3f':'#303030';
-}
+
 function switchAuthForm(which) {
-  for (const name of ['login','signup','reset'])
-    $(name+'Form').classList.toggle('hidden',name!==which);
+  $('loginForm').classList.toggle('hidden', which !== 'login');
+  $('signupForm').classList.toggle('hidden', which !== 'signup');
+  $('resetForm').classList.toggle('hidden', which !== 'reset');
   message('');
 }
-$('showSignup').onclick=()=>switchAuthForm('signup');
-$('showLogin1').onclick=()=>switchAuthForm('login');
-$('showLogin2').onclick=()=>switchAuthForm('login');
-$('showReset').onclick=()=>switchAuthForm('reset');
 
-function setBusy(form,busy,label) {
-  const button=form.querySelector('button[type="submit"]');
-  button.disabled=busy; button.textContent=busy?'Please wait…':label;
+$('showSignup').addEventListener('click', () => switchAuthForm('signup'));
+$('showLogin1').addEventListener('click', () => switchAuthForm('login'));
+$('showLogin2').addEventListener('click', () => switchAuthForm('login'));
+$('showReset').addEventListener('click', () => switchAuthForm('reset'));
+
+function setBusy(form, busy, label) {
+  const button = form.querySelector('button[type="submit"]');
+  button.disabled = busy;
+  button.textContent = busy ? 'Please wait…' : label;
 }
 
-$('login').addEventListener('submit',async e=>{
-  e.preventDefault();
-  if(state.busy)return;
-  const form=e.currentTarget; state.busy=true; setBusy(form,true,'Log In'); message('');
+$('login').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (state.busy) return;
+  state.busy = true;
+  setBusy(form, true, 'Log In');
+  message('');
   try {
-    const {data,error}=await supabase.auth.signInWithPassword({
-      email:$('loginEmail').value.trim(),password:$('loginPassword').value
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: $('loginEmail').value.trim(),
+      password: $('loginPassword').value
     });
-    if(error)throw error;
-    if(data.user)await enterApp(data.user);
-  } catch(err) { message(err.message||'Could not log in.','error'); }
-  finally { state.busy=false; setBusy(form,false,'Log In'); }
-});
-
-$('signup').addEventListener('submit',async e=>{
-  e.preventDefault();
-  if(state.busy)return;
-  const form=e.currentTarget; state.busy=true; setBusy(form,true,'Create Account'); message('');
-  const username=$('signupUsername').value.trim().toLowerCase();
-  const email=$('signupEmail').value.trim();
-  const password=$('signupPassword').value;
-  if(!/^[a-z0-9_]{3,24}$/.test(username)) {
-    message('Username must be 3–24 characters: letters, numbers, or underscores.','error');
-    state.busy=false; setBusy(form,false,'Create Account'); return;
+    if (error) throw error;
+    if (data.user) await enterApp(data.user);
+  } catch (error) {
+    message(error.message || 'Could not log in.', 'error');
+  } finally {
+    state.busy = false;
+    setBusy(form, false, 'Log In');
   }
-  try {
-    const {data,error}=await supabase.auth.signUp({
-      email,password,options:{data:{username}}
-    });
-    if(error)throw error;
-    if(data.session&&data.user)await enterApp(data.user);
-    else {
-      switchAuthForm('login'); $('loginEmail').value=email;
-      message('Account created. Confirm your email first if email confirmation is enabled in Supabase.','success');
-    }
-  } catch(err) { message(err.message||'Could not create the account.','error'); }
-  finally { state.busy=false; setBusy(form,false,'Create Account'); }
 });
 
-$('reset').addEventListener('submit',async e=>{
-  e.preventDefault();
-  if(state.busy)return;
-  const form=e.currentTarget; state.busy=true; setBusy(form,true,'Send Reset Email');
+$('signup').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (state.busy) return;
+  state.busy = true;
+  setBusy(form, true, 'Create Account');
+  message('');
+
+  const username = $('signupUsername').value.trim().toLowerCase();
+  const email = $('signupEmail').value.trim();
+  const password = $('signupPassword').value;
+
+  if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+    message('Username must be 3–24 characters: letters, numbers, or underscores.', 'error');
+    state.busy = false;
+    setBusy(form, false, 'Create Account');
+    return;
+  }
+
   try {
-    const {error}=await supabase.auth.resetPasswordForEmail($('resetEmail').value.trim());
-    if(error)throw error;
-    message('If the address is registered, a reset email will be sent.','success');
-  } catch(err) { message(err.message||'Could not request a reset email.','error'); }
-  finally { state.busy=false; setBusy(form,false,'Send Reset Email'); }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { username } }
+    });
+    if (error) throw error;
+
+    if (data.session && data.user) {
+      await enterApp(data.user);
+    } else {
+      switchAuthForm('login');
+      $('loginEmail').value = email;
+      message('Account created. Log in after confirming your email if confirmation is enabled in Supabase.', 'success');
+    }
+  } catch (error) {
+    message(error.message || 'Could not create the account.', 'error');
+  } finally {
+    state.busy = false;
+    setBusy(form, false, 'Create Account');
+  }
+});
+
+$('reset').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (state.busy) return;
+  state.busy = true;
+  setBusy(form, true, 'Send Reset Email');
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail($('resetEmail').value.trim());
+    if (error) throw error;
+    message('If the address is registered, a reset email will be sent. Make sure your reset URL is configured in Supabase.', 'success');
+  } catch (error) {
+    message(error.message || 'Could not request a reset email.', 'error');
+  } finally {
+    state.busy = false;
+    setBusy(form, false, 'Send Reset Email');
+  }
 });
 
 async function loadProfile(user) {
-  const columns='id, username, display_name, bio, avatar_url';
-  const {data,error}=await supabase.from('profiles').select(columns).eq('id',user.id).maybeSingle();
-  if(error)throw error;
-  if(data)return data;
-  const username=String(user.user_metadata?.username||'').toLowerCase();
-  if(!/^[a-z0-9_]{3,24}$/.test(username))
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, bio, avatar_url')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (data) return data;
+
+  const username = String(user.user_metadata?.username || '').toLowerCase();
+  if (!/^[a-z0-9_]{3,24}$/.test(username)) {
     throw new Error('Your profile is missing a valid username.');
-  const {data:created,error:insertError}=await supabase.from('profiles').insert({
-    id:user.id,username,display_name:username,bio:''
-  }).select(columns).single();
-  if(insertError)throw insertError;
+  }
+
+  const { data: created, error: insertError } = await supabase
+    .from('profiles')
+    .insert({ id: user.id, username, display_name: username, bio: '', avatar_url: null })
+    .select('id, username, display_name, bio, avatar_url')
+    .single();
+
+  if (insertError) throw insertError;
   return created;
 }
 
 async function enterApp(user) {
-  if(!user)return;
-  state.user=user;
-  try { state.profile=await loadProfile(user); }
-  catch(err) {
-    $('authScreen').classList.remove('hidden'); $('app').classList.add('hidden');
-    message('Signed in, but profile loading failed: '+err.message,'error'); return;
+  if (!user) return;
+  state.user = user;
+  try {
+    state.profile = await loadProfile(user);
+  } catch (error) {
+    $('authScreen').classList.remove('hidden');
+    $('app').classList.add('hidden');
+    message('Signed in, but profile loading failed: ' + error.message, 'error');
+    return;
   }
-  $('authScreen').classList.add('hidden'); $('app').classList.remove('hidden');
-  const name=state.profile.display_name||state.profile.username||user.email||'User';
-  $('sidebarUsername').textContent=name;
-  $('userAvatar').textContent=name.slice(0,1).toUpperCase();
+
+  $('authScreen').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  updateSidebar();
   showView(state.view);
 }
 
-supabase.auth.onAuthStateChange((event,session)=>{
-  if(session?.user&&!state.user) setTimeout(()=>{if(!state.user)enterApp(session.user)},0);
-  else if(!session?.user&&state.user) {
-    cleanupRealtime(); state.user=null; state.profile=null;
-    $('app').classList.add('hidden'); $('authScreen').classList.remove('hidden');
+function updateSidebar() {
+  const name = state.profile?.display_name || state.profile?.username || state.user?.email || 'User';
+  $('sidebarUsername').textContent = name;
+  $('userAvatar').textContent = name.slice(0, 1).toUpperCase();
+  if (state.profile?.avatar_url) {
+    $('userAvatar').innerHTML = `<img src="${safe(state.profile.avatar_url)}" alt="">`;
+  }
+}
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user && !state.user) {
+    setTimeout(() => { if (!state.user) enterApp(session.user); }, 0);
+  } else if (!session?.user && state.user) {
+    state.user = null;
+    state.profile = null;
+    clearInterval(state.refreshTimer);
+    $('app').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
   }
 });
+
 async function boot() {
-  const {data,error}=await supabase.auth.getSession();
-  if(error){message(error.message,'error');return}
-  if(data.session?.user)await enterApp(data.session.user);
+  const { data, error } = await supabase.auth.getSession();
+  if (error) { message(error.message, 'error'); return; }
+  if (data.session?.user) await enterApp(data.session.user);
   else switchAuthForm('login');
 }
 boot();
 
-function cleanupRealtime() {
-  for(const key of ['conversationChannel','serverChannel']) {
-    if(state[key])supabase.removeChannel(state[key]);
-    state[key]=null;
-  }
+function safe(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[char]);
 }
+
+function setContent(html) { $('mainContent').innerHTML = html; }
+
 function showView(view) {
-  state.view=view;
-  document.querySelectorAll('[data-view]').forEach(button=>{
-    button.classList.toggle('active',button.dataset.view===view&&
-      (button.classList.contains('side-item')||button.classList.contains('rail-button')));
+  state.view = view;
+  state.conversation = null;
+  state.server = null;
+  state.channel = null;
+  document.querySelectorAll('[data-view]').forEach(button => {
+    button.classList.toggle('active', button.dataset.view === view &&
+      (button.classList.contains('side-item') || button.classList.contains('rail-button')));
   });
-  const titles={
-    home:['Home','/ your space'],friends:['Direct Messages','/ people'],
-    servers:['Servers','/ community'],profile:['My Profile','/ account']
+
+  const titles = {
+    home:['Home','/ your space'],
+    friends:['Friends & DMs','/ people'],
+    servers:['Servers','/ community'],
+    profile:['My Profile','/ account']
   };
-  const [title,topic]=titles[view]||titles.home;
-  $('topTitle').textContent=title; $('topTopic').textContent=topic;
-  if(view==='home')renderHome();
-  if(view==='friends')renderFriends();
-  if(view==='servers')renderServers();
-  if(view==='profile')renderProfile();
+  const [title, topic] = titles[view] || titles.home;
+  $('topTitle').textContent = title;
+  $('topTopic').textContent = topic;
+
+  if (view === 'home') renderHome();
+  if (view === 'friends') renderFriends();
+  if (view === 'servers') renderServers();
+  if (view === 'profile') renderProfile();
 }
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
-$('sidebarAdd').onclick=()=>showView('servers');
 
 function renderHome() {
-  const name=state.profile?.display_name||state.profile?.username||'there';
-  setContent(`<div class="welcome">
-    <div class="welcome-logo">🐔</div><h1>Welcome to ChickenTalk.</h1>
-    <p>Hey, ${safe(name)}. Your midnight-black corner is ready.
-    Find friends, send messages, or explore your community.</p>
-    <button class="small-button" data-go="profile">Customize your profile</button>
-    <button class="small-button" data-go="friends">Find people</button>
-    <button class="small-button" data-go="servers">Explore servers</button>
-  </div>`);
-  $('mainContent').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView(b.dataset.go));
+  const name = state.profile?.display_name || state.profile?.username || 'there';
+  setContent(`
+    <div class="welcome">
+      <div class="welcome-logo">🐔</div>
+      <h1>Welcome to ChickenTalk.</h1>
+      <p>Hey, ${safe(name)}. Your midnight-black corner is ready. Find friends, chat privately, create servers, and customize your profile.</p>
+      <div class="row">
+        <button class="small-button" id="homeProfile">Customize profile</button>
+        <button class="small-button" id="homeFriends">Find people</button>
+        <button class="small-button" id="homeServers">Create a server</button>
+      </div>
+    </div>
+  `);
+  $('homeProfile').onclick = () => showView('profile');
+  $('homeFriends').onclick = () => showView('friends');
+  $('homeServers').onclick = () => showView('servers');
 }
-
-/* FRIENDS, REQUESTS, AND DIRECT/GROUP MESSAGES */
 
 async function renderFriends() {
-  cleanupRealtime();
   setContent(`
-    <h2 id="panelTitle">Direct Messages</h2>
-    <p class="panel-description">Find users, manage friend requests, and message your friends.</p>
-    <div class="tabs">
-      <button class="tab active" data-ftab="people">Find people</button>
-      <button class="tab" data-ftab="requests">Friend requests</button>
-      <button class="tab" data-ftab="chats">Your chats</button>
-      <button class="tab" data-ftab="group">Create group</button>
+    <h2 id="panelTitle">Friends & Direct Messages</h2>
+    <p class="panel-description">Search users, send friend requests, accept requests, and start private conversations.</p>
+    <div class="card">
+      <h3>Find people</h3>
+      <div class="row">
+        <input class="panel-input" id="userSearch" placeholder="Search username…" maxlength="24" style="flex:1;min-width:150px">
+        <button class="panel-action" id="searchUsers">Search</button>
+      </div>
+      <div class="status" id="friendsStatus"></div>
+      <div class="result-list" id="userResults"></div>
     </div>
-    <div id="friendArea"></div>
-    <div class="status" id="friendsStatus"></div>
+    <div class="card">
+      <h3>Friend requests</h3>
+      <div id="requestsStatus" class="status"></div>
+      <div id="requestResults" class="result-list"></div>
+    </div>
+    <div class="card">
+      <h3>Your friends</h3>
+      <div id="friendsListStatus" class="status"></div>
+      <div id="friendsList" class="result-list"></div>
+    </div>
+    <div class="card">
+      <h3>Direct messages</h3>
+      <div class="row">
+        <input class="panel-input" id="groupName" placeholder="Group name (optional)" maxlength="60" style="flex:1">
+        <button class="panel-action" id="newGroup">Create group</button>
+      </div>
+      <div id="dmStatus" class="status"></div>
+      <div id="dmList" class="result-list"></div>
+    </div>
   `);
-  $('mainContent').querySelectorAll('[data-ftab]').forEach(b=>{
-    b.onclick=()=>{
-      $('mainContent').querySelectorAll('[data-ftab]').forEach(x=>x.classList.toggle('active',x===b));
-      if(b.dataset.ftab==='people')renderPeopleTab();
-      if(b.dataset.ftab==='requests')renderRequestsTab();
-      if(b.dataset.ftab==='chats')renderChatsTab();
-      if(b.dataset.ftab==='group')renderGroupTab();
-    };
-  });
-  renderPeopleTab();
-}
 
-function renderPeopleTab() {
-  $('friendArea').innerHTML=`
-    <input class="panel-input" id="userSearch" placeholder="Search username…" maxlength="24">
-    <button class="panel-action" id="searchUsers">Search</button>
-    <div class="result-list" id="userResults"></div>`;
-  $('searchUsers').onclick=searchUsers;
-  $('userSearch').onkeydown=e=>{if(e.key==='Enter')searchUsers()};
+  $('searchUsers').onclick = searchUsers;
+  $('userSearch').onkeydown = e => { if (e.key === 'Enter') searchUsers(); };
+  $('newGroup').onclick = createGroup;
+  await Promise.all([loadRequests(), loadFriends(), loadConversations()]);
 }
 
 async function searchUsers() {
-  const query=$('userSearch').value.trim().toLowerCase();
-  $('userResults').innerHTML=''; setStatus('friendsStatus','');
-  if(query.length<2){setStatus('friendsStatus','Enter at least 2 characters.');return}
-  setStatus('friendsStatus','Searching…');
-  try {
-    const {data,error}=await supabase.from('profiles')
-      .select('id,username,display_name,bio,avatar_url')
-      .ilike('username',`%${query}%`).neq('id',state.user.id).limit(20);
-    if(error)throw error;
-    setStatus('friendsStatus',data.length?`${data.length} user(s) found.`:'No users found.');
-    for(const profile of data) {
-      const row=document.createElement('div'); row.className='result-item';
-      const label=document.createElement('span');
-      label.textContent=`${profile.display_name||profile.username} (@${profile.username})`;
-      const button=document.createElement('button'); button.className='small-button';
-      button.textContent='Add friend';
-      button.onclick=()=>sendFriendRequest(profile.id,button);
-      row.append(label,button); $('userResults').append(row);
-    }
-  } catch(err) { setStatus('friendsStatus','Search failed: '+err.message); }
-}
+  const query = $('userSearch').value.trim().toLowerCase();
+  $('userResults').innerHTML = '';
+  $('friendsStatus').textContent = '';
+  if (query.length < 2) { $('friendsStatus').textContent = 'Enter at least 2 characters.'; return; }
 
-async function sendFriendRequest(targetId,button) {
-  button.disabled=true;
+  $('friendsStatus').textContent = 'Searching…';
   try {
-    const {data,error}=await supabase.from('friendships')
-      .select('id,requester_id,addressee_id,status')
-      .or(`and(requester_id.eq.${state.user.id},addressee_id.eq.${targetId}),and(requester_id.eq.${targetId},addressee_id.eq.${state.user.id})`);
-    if(error)throw error;
-    const existing=(data||[]).find(x=>x.status==='accepted'||x.status==='pending');
-    if(existing) {
-      button.textContent=existing.status==='accepted'?'Friends':'Request sent / pending';
-      setStatus('friendsStatus',existing.status==='accepted'?'You are already friends.':'A friend request already exists.');
-      return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, username, display_name, bio, avatar_url')
+      .ilike('username', `%${query}%`)
+      .neq('id', state.user.id)
+      .limit(20);
+    if (error) throw error;
+    $('friendsStatus').textContent = data.length ? `${data.length} user(s) found.` : 'No users found.';
+    for (const profile of data) {
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      const label = document.createElement('span');
+      label.textContent = `${profile.display_name || profile.username} (@${profile.username})`;
+      const button = document.createElement('button');
+      button.className = 'small-button';
+      button.textContent = 'Add friend';
+      button.onclick = () => sendFriendRequest(profile.id, button);
+      row.append(label, button);
+      $('userResults').append(row);
     }
-    const {error:insertError}=await supabase.from('friendships').insert({
-      requester_id:state.user.id,addressee_id:targetId,status:'pending'
-    });
-    if(insertError)throw insertError;
-    button.textContent='Request sent';
-    setStatus('friendsStatus','Friend request sent.');
-  } catch(err) {
-    setStatus('friendsStatus','Could not send request: '+err.message);
-    button.disabled=false;
+  } catch (error) {
+    $('friendsStatus').textContent = 'Search failed: ' + error.message;
   }
 }
 
-async function renderRequestsTab() {
-  $('friendArea').innerHTML='<div id="requestResults" class="result-list"></div>';
-  setStatus('friendsStatus','Loading requests…');
+async function sendFriendRequest(userId, button) {
+  button.disabled = true;
   try {
-    const {data,error}=await supabase.from('friendships')
-      .select('id,requester_id,addressee_id,status')
-      .eq('addressee_id',state.user.id).eq('status','pending');
-    if(error)throw error;
-    const results=$('requestResults'); results.innerHTML='';
-    const ids=(data||[]).map(x=>x.requester_id);
-    let profiles=[];
-    if(ids.length) {
-      const response=await supabase.from('profiles')
-        .select('id,username,display_name').in('id',ids);
-      if(response.error)throw response.error;
-      profiles=response.data||[];
-    }
-    for(const req of data||[]) {
-      const p=profiles.find(x=>x.id===req.requester_id);
-      const row=document.createElement('div'); row.className='result-item';
-      const label=document.createElement('span');
-      label.textContent=p?`${p.display_name||p.username} (@${p.username})`:'ChickenTalk user';
-      const actions=document.createElement('div');
-      const accept=document.createElement('button'); accept.className='small-button'; accept.textContent='Accept';
-      const decline=document.createElement('button'); decline.className='small-button'; decline.textContent='Decline';
-      accept.onclick=()=>respondFriendRequest(req.id,'accepted',accept);
-      decline.onclick=()=>respondFriendRequest(req.id,'declined',decline);
-      actions.append(accept,decline); row.append(label,actions); results.append(row);
-    }
-    if(!data?.length)results.innerHTML='<p class="empty-note">No pending friend requests.</p>';
-    setStatus('friendsStatus','');
-  } catch(err) { setStatus('friendsStatus','Could not load requests: '+err.message); }
-}
-
-async function respondFriendRequest(id,status,button) {
-  button.disabled=true;
-  try {
-    const {error}=await supabase.from('friendships').update({status})
-      .eq('id',id).eq('addressee_id',state.user.id).eq('status','pending');
-    if(error)throw error;
-    renderRequestsTab();
-  } catch(err) {
-    button.disabled=false; setStatus('friendsStatus','Could not update request: '+err.message);
+    const { error } = await supabase.from('friendships').insert({
+      requester_id: state.user.id,
+      addressee_id: userId,
+      status: 'pending'
+    });
+    if (error) throw error;
+    button.textContent = 'Request sent';
+    $('friendsStatus').textContent = 'Friend request sent.';
+  } catch (error) {
+    button.disabled = false;
+    $('friendsStatus').textContent = 'Could not send request: ' + error.message;
   }
 }
 
-async function renderChatsTab() {
-  $('friendArea').innerHTML=`
-    <div class="split">
-      <div class="list-panel"><h3>Your conversations</h3><div id="chatList"></div></div>
-      <div id="chatArea"><p class="empty-note">Choose a conversation to open it.</p></div>
-    </div>`;
-  await loadConversations();
-}
-
-async function loadConversations() {
-  setStatus('friendsStatus','Loading conversations…');
+async function loadRequests() {
+  const target = $('requestResults');
+  target.innerHTML = '';
+  $('requestsStatus').textContent = 'Loading…';
   try {
-    const {data:members,error}=await supabase.from('conversation_members')
-      .select('conversation_id').eq('user_id',state.user.id);
-    if(error)throw error;
-    const ids=[...new Set((members||[]).map(x=>x.conversation_id))];
-    const list=$('chatList'); if(!list)return;
-    list.innerHTML='';
-    if(!ids.length) {
-      list.innerHTML='<p class="muted">No chats yet. Find a friend or create a group.</p>';
-      setStatus('friendsStatus',''); return;
+    const { data, error } = await supabase
+      .from('friendships')
+      .select('id, requester_id, addressee_id, status, requester:profiles!friendships_requester_id_fkey(id, username, display_name), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name)')
+      .eq('status', 'pending')
+      .eq('addressee_id', state.user.id);
+    if (error) throw error;
+    $('requestsStatus').textContent = data.length ? `${data.length} pending request(s).` : 'No pending requests.';
+    for (const request of data) {
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      const label = document.createElement('span');
+      label.textContent = `@${request.requester?.username || 'Unknown user'}`;
+      const actions = document.createElement('div');
+      actions.className = 'row';
+      const accept = document.createElement('button');
+      accept.className = 'small-button';
+      accept.textContent = 'Accept';
+      accept.onclick = async () => {
+        const { error } = await supabase.from('friendships').update({status:'accepted'}).eq('id', request.id);
+        if (error) $('requestsStatus').textContent = error.message;
+        else { await loadRequests(); await loadFriends(); }
+      };
+      const decline = document.createElement('button');
+      decline.className = 'small-button';
+      decline.textContent = 'Decline';
+      decline.onclick = async () => {
+        const { error } = await supabase.from('friendships').delete().eq('id', request.id);
+        if (error) $('requestsStatus').textContent = error.message;
+        else loadRequests();
+      };
+      actions.append(accept, decline);
+      row.append(label, actions);
+      target.append(row);
     }
-    const {data:conversations,error:convError}=await supabase.from('conversations')
-      .select('id,type,created_by').in('id',ids);
-    if(convError)throw convError;
-    const {data:allMembers,error:memberError}=await supabase.from('conversation_members')
-      .select('conversation_id,user_id').in('conversation_id',ids);
-    if(memberError)throw memberError;
-    const otherIds=[...new Set((allMembers||[]).filter(m=>m.user_id!==state.user.id).map(m=>m.user_id))];
-    let profiles=[];
-    if(otherIds.length) {
-      const p=await supabase.from('profiles').select('id,username,display_name').in('id',otherIds);
-      if(p.error)throw p.error; profiles=p.data||[];
-    }
-    state.conversations=conversations||[];
-    for(const conv of state.conversations) {
-      const participants=(allMembers||[]).filter(m=>m.conversation_id===conv.id);
-      const names=participants.filter(m=>m.user_id!==state.user.id).map(m=>{
-        const p=profiles.find(x=>x.id===m.user_id);
-        return p?.display_name||p?.username||'User';
-      });
-      const label=conv.type==='group'?'Group: '+(names.join(', ')||'Group chat'):(names[0]||'Direct message');
-      const button=document.createElement('button');
-      button.className='list-button'; button.textContent=label;
-      button.onclick=()=>openConversation(conv,label);
-      list.append(button);
-    }
-    setStatus('friendsStatus','');
-  } catch(err) { setStatus('friendsStatus','Could not load chats: '+err.message); }
+  } catch (error) {
+    $('requestsStatus').textContent = 'Could not load requests: ' + error.message;
+  }
 }
 
-async function openConversation(conv,label) {
-  state.currentConversation=conv;
-  if(state.conversationChannel)supabase.removeChannel(state.conversationChannel);
-  $('chatArea').innerHTML=`
-    <div class="chat-panel">
-      <div class="chat-heading"><h3>${safe(label)}</h3><p>${conv.type==='group'?'Group conversation':'Direct message'}</p></div>
-      <div class="chat-messages" id="dmMessages"></div>
-      <form class="chat-compose" id="dmCompose">
-        <input id="dmInput" maxlength="4000" placeholder="Write a message…" autocomplete="off" required>
-        <button class="panel-action" type="submit">Send</button>
-      </form>
-      <div class="status" id="dmStatus"></div>
-    </div>`;
-  $('dmCompose').onsubmit=sendDirectMessage;
-  await loadDirectMessages(conv.id);
-  state.conversationChannel=supabase.channel('dm-'+conv.id+'-'+Date.now())
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',
-      filter:`conversation_id=eq.${conv.id}`},payload=>{
-      addMessageToUI('dmMessages',payload.new);
-    }).subscribe();
-}
-
-async function loadDirectMessages(id) {
-  setStatus('dmStatus','Loading messages…');
+async function loadFriends() {
+  const target = $('friendsList');
+  target.innerHTML = '';
+  $('friendsListStatus').textContent = 'Loading…';
   try {
-    const {data,error}=await supabase.from('messages')
-      .select('id,conversation_id,sender_id,content,created_at')
-      .eq('conversation_id',id).order('created_at',{ascending:true}).limit(200);
-    if(error)throw error;
-    const ids=[...new Set((data||[]).map(m=>m.sender_id))];
-    let profiles=[];
-    if(ids.length) {
-      const p=await supabase.from('profiles').select('id,username,display_name').in('id',ids);
-      if(p.error)throw p.error; profiles=p.data||[];
+    const { data, error } = await supabase
+      .from('friendships')
+      .select('id, requester_id, addressee_id, status, requester:profiles!friendships_requester_id_fkey(id, username, display_name), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name)')
+      .eq('status', 'accepted')
+      .or(`requester_id.eq.${state.user.id},addressee_id.eq.${state.user.id}`);
+    if (error) throw error;
+
+    $('friendsListStatus').textContent = data.length ? `${data.length} friend(s).` : 'No friends yet.';
+    for (const friendship of data) {
+      const friend = friendship.requester_id === state.user.id ? friendship.addressee : friendship.requester;
+      if (!friend) continue;
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      const label = document.createElement('span');
+      label.textContent = `${friend.display_name || friend.username} (@${friend.username})`;
+      const button = document.createElement('button');
+      button.className = 'small-button';
+      button.textContent = 'Message';
+      button.onclick = () => startDM(friend.id);
+      row.append(label, button);
+      target.append(row);
     }
-    const container=$('dmMessages'); if(!container)return;
-    container.innerHTML='';
-    for(const m of data||[])addMessageToUI('dmMessages',m,profiles);
-    container.scrollTop=container.scrollHeight;
-    setStatus('dmStatus','');
-  } catch(err) { setStatus('dmStatus','Could not load messages: '+err.message); }
+  } catch (error) {
+    $('friendsListStatus').textContent = 'Could not load friends: ' + error.message;
+  }
 }
 
-function addMessageToUI(containerId,m,knownProfiles=null) {
-  const container=$(containerId); if(!container||!m)return;
-  if(m.id&&container.querySelector(`[data-message-id="${CSS.escape(String(m.id))}"]`))return;
-  const el=document.createElement('div'); el.className='chat-message';
-  if(m.id)el.dataset.messageId=m.id;
-  const sender=m.sender_id===state.user?.id
-    ?(state.profile?.display_name||state.profile?.username||'You'):'User';
-  const known=knownProfiles?.find(p=>p.id===m.sender_id);
-  const name=known?.display_name||known?.username||sender;
-  const date=m.created_at?new Date(m.created_at):new Date();
-  el.innerHTML=`<strong>${safe(name)}</strong><time>${safe(date.toLocaleString())}</time><p>${safe(m.content||'')}</p>`;
-  container.append(el); container.scrollTop=container.scrollHeight;
-}
-
-async function sendDirectMessage(e) {
-  e.preventDefault();
-  const input=$('dmInput'); const content=input.value.trim();
-  if(!content||!state.currentConversation)return;
-  const button=e.currentTarget.querySelector('button'); button.disabled=true;
+async function startDM(friendId) {
+  $('dmStatus').textContent = 'Opening conversation…';
   try {
-    const {error}=await supabase.from('messages').insert({
-      conversation_id:state.currentConversation.id,
-      sender_id:state.user.id,content
-    });
-    if(error)throw error;
-    input.value='';
-  } catch(err) { setStatus('dmStatus','Could not send message: '+err.message); }
-  finally { button.disabled=false; input.focus(); }
-}
+    const { data: memberships, error: memberError } = await supabase
+      .from('conversation_members')
+      .select('conversation_id')
+      .eq('user_id', state.user.id);
+    if (memberError) throw memberError;
 
-function renderGroupTab() {
-  $('friendArea').innerHTML=`
-    <p class="panel-description">Create a group with existing ChickenTalk users. Enter usernames separated by commas.</p>
-    <input class="panel-input" id="groupName" maxlength="60" placeholder="Group name">
-    <input class="panel-input" id="groupUsers" placeholder="user_one, user_two">
-    <button class="panel-action" id="createGroup">Create Group</button>`;
-  $('createGroup').onclick=createGroup;
+    for (const membership of memberships || []) {
+      const { data: other } = await supabase
+        .from('conversation_members')
+        .select('user_id')
+        .eq('conversation_id', membership.conversation_id)
+        .eq('user_id', friendId)
+        .maybeSingle();
+      if (other) {
+        const { data: count } = await supabase
+          .from('conversation_members')
+          .select('user_id')
+          .eq('conversation_id', membership.conversation_id);
+        if ((count || []).length === 2) {
+          await openConversation(membership.conversation_id);
+          return;
+        }
+      }
+    }
+
+    const { data: conversation, error } = await supabase
+      .from('conversations')
+      .insert({ type: 'direct', created_by: state.user.id })
+      .select('id')
+      .single();
+    if (error) throw error;
+
+    const { error: insertError } = await supabase.from('conversation_members').insert([
+      {conversation_id:conversation.id,user_id:state.user.id},
+      {conversation_id:conversation.id,user_id:friendId}
+    ]);
+    if (insertError) throw insertError;
+    await openConversation(conversation.id);
+  } catch (error) {
+    $('dmStatus').textContent = 'Could not open DM: ' + error.message;
+  }
 }
 
 async function createGroup() {
-  const name=$('groupName').value.trim();
-  const usernames=$('groupUsers').value.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
-  if(!name){setStatus('friendsStatus','Enter a group name.');return}
-  if(!usernames.length){setStatus('friendsStatus','Enter at least one username.');return}
-  if(usernames.includes(state.profile.username.toLowerCase())) {
-    setStatus('friendsStatus','You do not need to add your own username.');return;
-  }
-  setStatus('friendsStatus','Creating group…');
+  const name = $('groupName').value.trim() || 'Group chat';
+  const raw = prompt('Enter friend usernames separated by commas:');
+  if (!raw) return;
+  const usernames = raw.split(',').map(x => x.trim().replace(/^@/, '').toLowerCase()).filter(Boolean);
+  $('dmStatus').textContent = 'Creating group…';
   try {
-    const {data:profiles,error:pError}=await supabase.from('profiles')
-      .select('id,username').in('username',usernames);
-    if(pError)throw pError;
-    const found=new Set((profiles||[]).map(p=>p.username.toLowerCase()));
-    const missing=usernames.filter(u=>!found.has(u));
-    if(missing.length)throw new Error('Unknown username(s): '+missing.join(', '));
-    const ids=[...new Set([state.user.id,...profiles.map(p=>p.id)])];
-    const {data:conv,error}=await supabase.from('conversations')
-      .insert({type:'group',created_by:state.user.id}).select('id').single();
-    if(error)throw error;
-    const rows=ids.map(user_id=>({conversation_id:conv.id,user_id}));
-    const {error:memberError}=await supabase.from('conversation_members').insert(rows);
-    if(memberError)throw memberError;
-    setStatus('friendsStatus','Group created.');
-    renderChatsTab();
-  } catch(err) { setStatus('friendsStatus','Could not create group: '+err.message); }
+    const { data: profiles, error: searchError } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .in('username', usernames);
+    if (searchError) throw searchError;
+
+    const ids = [...new Set([state.user.id, ...(profiles || []).map(p => p.id)])];
+    if (ids.length < 3) throw new Error('Enter at least two other valid usernames.');
+
+    const { data: conversation, error } = await supabase
+      .from('conversations')
+      .insert({type:'group',name,created_by:state.user.id})
+      .select('id')
+      .single();
+    if (error) throw error;
+
+    const { error: memberError } = await supabase.from('conversation_members').insert(
+      ids.map(user_id => ({conversation_id:conversation.id,user_id}))
+    );
+    if (memberError) throw memberError;
+    $('groupName').value = '';
+    await loadConversations();
+    await openConversation(conversation.id);
+  } catch (error) {
+    $('dmStatus').textContent = 'Could not create group: ' + error.message;
+  }
 }
 
-/* SERVERS AND CHANNELS */
+async function loadConversations() {
+  const target = $('dmList');
+  target.innerHTML = '';
+  $('dmStatus').textContent = 'Loading conversations…';
+  try {
+    const { data: memberships, error } = await supabase
+      .from('conversation_members')
+      .select('conversation_id')
+      .eq('user_id', state.user.id);
+    if (error) throw error;
+    const ids = [...new Set((memberships || []).map(x => x.conversation_id))];
+    if (!ids.length) { $('dmStatus').textContent = 'No conversations yet. Message a friend to start one.'; return; }
+
+    const { data: conversations, error: convError } = await supabase
+      .from('conversations')
+      .select('id, type, name, created_at')
+      .in('id', ids)
+      .order('created_at', {ascending:false});
+    if (convError) throw convError;
+    $('dmStatus').textContent = '';
+    for (const conversation of conversations || []) {
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      const label = document.createElement('span');
+      label.textContent = conversation.name || (conversation.type === 'group' ? 'Group chat' : 'Direct message');
+      const button = document.createElement('button');
+      button.className = 'small-button';
+      button.textContent = 'Open';
+      button.onclick = () => openConversation(conversation.id);
+      row.append(label, button);
+      target.append(row);
+    }
+  } catch (error) {
+    $('dmStatus').textContent = 'Could not load conversations: ' + error.message;
+  }
+}
+
+async function openConversation(conversationId) {
+  state.conversation = conversationId;
+  const content = $('mainContent');
+  content.innerHTML = `
+    <div class="row" style="justify-content:space-between;margin-bottom:15px">
+      <h2 id="panelTitle">Conversation</h2>
+      <button class="small-button" id="backToDMs">Back to DMs</button>
+    </div>
+    <div class="chat-layout">
+      <div class="chat-list"><button class="chat-choice active">Current conversation</button></div>
+      <div class="chat-window">
+        <div class="chat-heading" id="conversationHeading">Loading…</div>
+        <div class="chat-messages" id="conversationMessages"></div>
+        <form class="chat-compose" id="conversationForm">
+          <input id="conversationInput" maxlength="4000" placeholder="Message…" autocomplete="off" required>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <div class="status" id="conversationStatus"></div>
+  `;
+  $('backToDMs').onclick = () => renderFriends();
+  $('conversationForm').onsubmit = async e => {
+    e.preventDefault();
+    const input = $('conversationInput');
+    const body = input.value.trim();
+    if (!body) return;
+    const button = $('conversationForm').querySelector('button');
+    button.disabled = true;
+    try {
+      const { error } = await supabase.from('messages').insert({
+        conversation_id: conversationId,
+        sender_id: state.user.id,
+        content: body
+      });
+      if (error) throw error;
+      input.value = '';
+      await loadConversationMessages(conversationId);
+    } catch (error) {
+      $('conversationStatus').textContent = 'Message failed: ' + error.message;
+    } finally {
+      button.disabled = false;
+      input.focus();
+    }
+  };
+  await loadConversationMessages(conversationId);
+  clearInterval(state.refreshTimer);
+  state.refreshTimer = setInterval(() => {
+    if (state.view === 'friends' && state.conversation === conversationId) loadConversationMessages(conversationId);
+  }, 3000);
+}
+
+async function loadConversationMessages(conversationId) {
+  try {
+    const { data: members, error: memberError } = await supabase
+      .from('conversation_members')
+      .select('user_id')
+      .eq('conversation_id', conversationId);
+    if (memberError) throw memberError;
+
+    const otherIds = (members || []).map(m => m.user_id).filter(id => id !== state.user.id);
+    let heading = 'Direct message';
+    if (otherIds.length) {
+      const { data: people } = await supabase.from('profiles').select('username, display_name').in('id', otherIds);
+      if (otherIds.length > 1) heading = 'Group chat';
+      else if (people?.[0]) heading = people[0].display_name || '@' + people[0].username;
+    }
+    if ($('conversationHeading')) $('conversationHeading').textContent = heading;
+
+    const { data, error } = await supabase
+      .from('messages')
+      .select('id, sender_id, content, created_at')
+      .eq('conversation_id', conversationId)
+      .order('created_at', {ascending:true})
+      .limit(200);
+    if (error) throw error;
+
+    const senderIds = [...new Set((data || []).map(m => m.sender_id))];
+    const { data: profiles } = senderIds.length
+      ? await supabase.from('profiles').select('id, username, display_name').in('id', senderIds)
+      : {data:[]};
+    const names = Object.fromEntries((profiles || []).map(p => [p.id, p.display_name || p.username]));
+    const messages = $('conversationMessages');
+    if (!messages) return;
+    const atBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 80;
+    messages.innerHTML = '';
+    for (const item of data || []) {
+      const row = document.createElement('div');
+      row.className = 'chat-message';
+      const date = item.created_at ? new Date(item.created_at).toLocaleString() : '';
+      row.innerHTML = `<strong>${safe(names[item.sender_id] || 'User')}</strong><time>${safe(date)}</time><div>${safe(item.content)}</div>`;
+      messages.append(row);
+    }
+    if (!data?.length) messages.innerHTML = '<p class="empty-note">No messages yet. Say hello.</p>';
+    if (atBottom || messages.scrollTop === 0) messages.scrollTop = messages.scrollHeight;
+  } catch (error) {
+    if ($('conversationStatus')) $('conversationStatus').textContent = 'Could not load messages: ' + error.message;
+  }
+}
 
 async function renderServers() {
-  cleanupRealtime();
-  state.currentServer=null; state.currentChannel=null;
   setContent(`
     <h2 id="panelTitle">Servers</h2>
-    <p class="panel-description">Create a community, join with an invite code, or open one of your servers.</p>
-    <div class="tabs">
-      <button class="tab active" data-stab="list">My servers</button>
-      <button class="tab" data-stab="create">Create server</button>
-      <button class="tab" data-stab="join">Join server</button>
+    <p class="panel-description">Create communities with channels and messages.</p>
+    <div class="card">
+      <h3>Create a server</h3>
+      <div class="row">
+        <input class="panel-input" id="serverName" placeholder="New server name…" maxlength="60" style="flex:1;min-width:150px">
+        <button class="panel-action" id="createServer">Create Server</button>
+      </div>
+      <div class="status" id="serverStatus"></div>
     </div>
-    <div id="serverArea"></div>
-    <div class="status" id="serverStatus"></div>`);
-  $('mainContent').querySelectorAll('[data-stab]').forEach(b=>b.onclick=()=>{
-    $('mainContent').querySelectorAll('[data-stab]').forEach(x=>x.classList.toggle('active',x===b));
-    state.serverTab=b.dataset.stab;
-    if(b.dataset.stab==='list')renderServerList();
-    if(b.dataset.stab==='create')renderCreateServer();
-    if(b.dataset.stab==='join')renderJoinServer();
-  });
-  renderServerList();
+    <div class="card"><h3>Your servers</h3><div id="serverResults" class="result-list"></div></div>
+  `);
+  $('createServer').onclick = createServer;
+  await loadServers();
 }
 
-async function renderServerList() {
-  $('serverArea').innerHTML='<div class="result-list" id="serverResults"></div>';
-  setStatus('serverStatus','Loading servers…');
+async function loadServers() {
   try {
-    const {data,error}=await supabase.from('server_members')
-      .select('server_id,servers(id,name,description,invite_code,owner_id)')
-      .eq('user_id',state.user.id);
-    if(error)throw error;
-    const list=$('serverResults'); list.innerHTML='';
-    state.servers=(data||[]).map(m=>m.servers).filter(Boolean);
-    for(const server of state.servers) {
-      const row=document.createElement('div'); row.className='result-item';
-      const label=document.createElement('span'); label.textContent=server.name;
-      const open=document.createElement('button'); open.className='small-button'; open.textContent='Open';
-      open.onclick=()=>openServer(server);
-      row.append(label,open); list.append(row);
+    const { data, error } = await supabase
+      .from('server_members')
+      .select('server_id, servers(id, name, owner_id)')
+      .eq('user_id', state.user.id);
+    if (error) throw error;
+    const list = $('serverResults');
+    list.innerHTML = '';
+    for (const member of data || []) {
+      const server = member.servers;
+      if (!server) continue;
+      const row = document.createElement('div');
+      row.className = 'result-item';
+      const label = document.createElement('span');
+      label.textContent = server.name;
+      const button = document.createElement('button');
+      button.className = 'small-button';
+      button.textContent = 'Open';
+      button.onclick = () => openServer(server);
+      row.append(label, button);
+      list.append(row);
     }
-    if(!state.servers.length)list.innerHTML='<p class="empty-note">No servers yet. Create one or join with an invite code.</p>';
-    setStatus('serverStatus','');
-  } catch(err) { setStatus('serverStatus','Could not load servers: '+err.message); }
-}
-
-function renderCreateServer() {
-  $('serverArea').innerHTML=`
-    <input class="panel-input" id="serverName" maxlength="60" placeholder="Server name">
-    <input class="panel-input" id="serverDescription" maxlength="250" placeholder="Description (optional)">
-    <button class="panel-action" id="createServer">Create Server</button>`;
-  $('createServer').onclick=createServer;
+    if (!data?.length) list.innerHTML = '<p class="empty-note">No servers yet.</p>';
+  } catch (error) {
+    $('serverResults').textContent = 'Could not load servers: ' + error.message;
+  }
 }
 
 async function createServer() {
-  const name=$('serverName').value.trim();
-  const description=$('serverDescription').value.trim();
-  if(!name){setStatus('serverStatus','Enter a server name first.');return}
-  setStatus('serverStatus','Creating server…');
+  const name = $('serverName').value.trim();
+  if (!name) { $('serverStatus').textContent = 'Enter a server name first.'; return; }
+  $('serverStatus').textContent = 'Creating…';
   try {
-    const {data:server,error}=await supabase.from('servers')
-      .insert({name,description,owner_id:state.user.id})
-      .select('id,name,description,invite_code,owner_id').single();
-    if(error)throw error;
-    /* Some SQL setups create the owner membership automatically.
-       Check first to avoid inserting a duplicate membership. */
-    const {data:existing,error:checkError}=await supabase.from('server_members')
-      .select('server_id').eq('server_id',server.id).eq('user_id',state.user.id).maybeSingle();
-    if(checkError)throw checkError;
-    if(!existing) {
-      const {error:memberError}=await supabase.from('server_members').insert({
-        server_id:server.id,user_id:state.user.id,role:'owner'
-      });
-      if(memberError)throw memberError;
-    }
-    setStatus('serverStatus','Server created.');
-    await openServer(server);
-  } catch(err) { setStatus('serverStatus','Could not create server: '+err.message); }
+    const { data: server, error } = await supabase
+      .from('servers')
+      .insert({name, owner_id:state.user.id})
+      .select('id, name, owner_id')
+      .single();
+    if (error) throw error;
+
+    const { error: memberError } = await supabase.from('server_members').insert({
+      server_id:server.id,user_id:state.user.id,role:'owner'
+    });
+    if (memberError) throw memberError;
+
+    const { data: channel, error: channelError } = await supabase
+      .from('server_channels')
+      .insert({server_id:server.id,name:'general',created_by:state.user.id})
+      .select('id, name')
+      .single();
+    if (channelError) throw channelError;
+    $('serverName').value = '';
+    $('serverStatus').textContent = 'Server created.';
+    await loadServers();
+    await openServer(server, channel);
+  } catch (error) {
+    $('serverStatus').textContent = 'Could not create server: ' + error.message;
+  }
 }
 
-function renderJoinServer() {
-  $('serverArea').innerHTML=`
-    <p class="panel-description">Enter the invite code provided by the server owner.</p>
-    <input class="panel-input" id="inviteCode" maxlength="100" placeholder="Invite code">
-    <button class="panel-action" id="joinServer">Join Server</button>`;
-  $('joinServer').onclick=joinServer;
-}
-
-async function joinServer() {
-  const code=$('inviteCode').value.trim();
-  if(!code){setStatus('serverStatus','Enter an invite code.');return}
-  setStatus('serverStatus','Looking up server…');
-  try {
-    const {data:server,error}=await supabase.from('servers')
-      .select('id,name,description,invite_code,owner_id').eq('invite_code',code).maybeSingle();
-    if(error)throw error;
-    if(!server)throw new Error('No server was found for that invite code.');
-    const {data:existing,error:checkError}=await supabase.from('server_members')
-      .select('server_id').eq('server_id',server.id).eq('user_id',state.user.id).maybeSingle();
-    if(checkError)throw checkError;
-    if(!existing) {
-      const {error:joinError}=await supabase.from('server_members').insert({
-        server_id:server.id,user_id:state.user.id,role:'member'
-      });
-      if(joinError)throw joinError;
-    }
-    setStatus('serverStatus','Joined server.');
-    await openServer(server);
-  } catch(err) { setStatus('serverStatus','Could not join server: '+err.message); }
-}
-
-async function openServer(server) {
-  cleanupRealtime();
-  state.currentServer=server; state.currentChannel=null;
-  state.topServerName=server.name;
-  $('topTitle').textContent=server.name;
-  $('topTopic').textContent='/ server';
+async function openServer(server, preferredChannel = null) {
+  state.server = server;
+  state.channel = preferredChannel?.id || null;
   setContent(`
-    <h2 id="panelTitle">${safe(server.name)}</h2>
-    <p class="panel-description">${safe(server.description||'A ChickenTalk community.')}</p>
-    <div class="tabs">
-      <button class="tab active" data-server-tab="channels">Channels</button>
-      <button class="tab" data-server-tab="members">Members</button>
-      <button class="tab" data-server-tab="invite">Invite code</button>
+    <div class="row" style="justify-content:space-between;margin-bottom:15px">
+      <h2 id="panelTitle">${safe(server.name)}</h2>
+      <button class="small-button" id="backToServers">Back to servers</button>
     </div>
-    <div id="serverWorkspace"></div>
-    <div class="status" id="workspaceStatus"></div>`);
-  $('mainContent').querySelectorAll('[data-server-tab]').forEach(b=>b.onclick=()=>{
-    $('mainContent').querySelectorAll('[data-server-tab]').forEach(x=>x.classList.toggle('active',x===b));
-    if(b.dataset.serverTab==='channels')loadServerChannels();
-    if(b.dataset.serverTab==='members')loadServerMembers();
-    if(b.dataset.serverTab==='invite')showInviteCode();
-  });
-  await loadServerChannels();
-}
-
-async function loadServerChannels() {
-  const server=state.currentServer; if(!server)return;
-  $('serverWorkspace').innerHTML=`
-    <div class="split">
-      <div class="list-panel">
-        <h3>Channels</h3>
+    <div class="server-layout">
+      <aside class="server-nav">
+        <h3>CHANNELS</h3>
         <div id="channelList"></div>
-        <div id="channelCreateArea"></div>
+        <hr>
+        <input class="panel-input" id="channelName" placeholder="Channel name" maxlength="40">
+        <button class="small-button" id="createChannel">+ Channel</button>
+        <div id="channelStatus" class="status"></div>
+      </aside>
+      <div class="server-main" id="serverChat">
+        <p class="empty-note">Choose a channel.</p>
       </div>
-      <div id="serverChatArea"><p class="empty-note">Choose a channel.</p></div>
-    </div>`;
-  setStatus('workspaceStatus','Loading channels…');
-  try {
-    const {data,error}=await supabase.from('server_channels')
-      .select('id,server_id,name').eq('server_id',server.id).order('name');
-    if(error)throw error;
-    state.channels=data||[];
-    const list=$('channelList'); list.innerHTML='';
-    for(const channel of state.channels) {
-      const b=document.createElement('button'); b.className='list-button';
-      b.textContent='# '+channel.name; b.onclick=()=>openServerChannel(channel);
-      list.append(b);
-    }
-    if(!state.channels.length)list.innerHTML='<p class="muted">No channels found.</p>';
-    const createArea=$('channelCreateArea');
-    const createButton=document.createElement('button');
-    createButton.className='small-button'; createButton.textContent='+ Create channel';
-    createButton.onclick=renderCreateChannel; createArea.append(createButton);
-    setStatus('workspaceStatus','');
-    if(state.channels.length)await openServerChannel(state.channels[0]);
-  } catch(err) { setStatus('workspaceStatus','Could not load channels: '+err.message); }
+    </div>
+  `);
+  $('backToServers').onclick = () => renderServers();
+  $('createChannel').onclick = createChannel;
+  await loadChannels(preferredChannel?.id);
 }
 
-function renderCreateChannel() {
-  const area=$('channelCreateArea');
-  area.innerHTML=`
-    <input class="panel-input" id="newChannelName" maxlength="50" placeholder="Channel name">
-    <button class="panel-action" id="saveChannel">Create</button>`;
-  $('saveChannel').onclick=createChannel;
+async function loadChannels(preferredId = null) {
+  try {
+    const { data, error } = await supabase
+      .from('server_channels')
+      .select('id, name, server_id')
+      .eq('server_id', state.server.id)
+      .order('name');
+    if (error) throw error;
+    const list = $('channelList');
+    list.innerHTML = '';
+    for (const channel of data || []) {
+      const button = document.createElement('button');
+      button.textContent = '# ' + channel.name;
+      button.classList.toggle('active', channel.id === (preferredId || state.channel));
+      button.onclick = () => openChannel(channel);
+      list.append(button);
+    }
+    if (!data?.length) $('channelStatus').textContent = 'No channels yet. Create one.';
+    else {
+      const selected = data.find(c => c.id === (preferredId || state.channel)) || data[0];
+      await openChannel(selected);
+    }
+  } catch (error) {
+    $('channelStatus').textContent = 'Could not load channels: ' + error.message;
+  }
 }
 
 async function createChannel() {
-  const name=$('newChannelName').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'-');
-  if(!name){setStatus('workspaceStatus','Enter a channel name.');return}
+  const name = $('channelName').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-');
+  if (!name) { $('channelStatus').textContent = 'Enter a channel name.'; return; }
   try {
-    const {error}=await supabase.from('server_channels').insert({
-      server_id:state.currentServer.id,name
-    });
-    if(error)throw error;
-    await loadServerChannels();
-  } catch(err) { setStatus('workspaceStatus','Could not create channel: '+err.message); }
+    const { data, error } = await supabase
+      .from('server_channels')
+      .insert({server_id:state.server.id,name,created_by:state.user.id})
+      .select('id, name, server_id')
+      .single();
+    if (error) throw error;
+    $('channelName').value = '';
+    $('channelStatus').textContent = 'Channel created.';
+    await loadChannels(data.id);
+  } catch (error) {
+    $('channelStatus').textContent = 'Could not create channel: ' + error.message;
+  }
 }
 
-async function openServerChannel(channel) {
-  state.currentChannel=channel;
-  if(state.serverChannel)supabase.removeChannel(state.serverChannel);
-  $('serverChatArea').innerHTML=`
-    <div class="chat-panel">
-      <div class="chat-heading"><h3># ${safe(channel.name)}</h3><p>Server channel</p></div>
-      <div class="chat-messages" id="serverMessages"></div>
-      <form class="chat-compose" id="serverCompose">
-        <input id="serverInput" maxlength="4000" placeholder="Message #${safe(channel.name)}" autocomplete="off" required>
-        <button class="panel-action" type="submit">Send</button>
-      </form>
-      <div class="status" id="serverChatStatus"></div>
-    </div>`;
-  $('serverCompose').onsubmit=sendServerMessage;
-  await loadServerMessages(channel);
-  state.serverChannel=supabase.channel('server-'+channel.id+'-'+Date.now())
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'server_messages',
-      filter:`channel_id=eq.${channel.id}`},payload=>{
-      addMessageToUI('serverMessages',payload.new);
-    }).subscribe();
-}
-
-async function loadServerMessages(channel) {
-  setStatus('serverChatStatus','Loading messages…');
-  try {
-    const {data,error}=await supabase.from('server_messages')
-      .select('id,server_id,channel_id,sender_id,content,created_at')
-      .eq('channel_id',channel.id).order('created_at',{ascending:true}).limit(200);
-    if(error)throw error;
-    const container=$('serverMessages'); if(!container)return;
-    container.innerHTML='';
-    for(const m of data||[])addMessageToUI('serverMessages',m);
-    container.scrollTop=container.scrollHeight;
-    setStatus('serverChatStatus','');
-  } catch(err) { setStatus('serverChatStatus','Could not load messages: '+err.message); }
-}
-
-async function sendServerMessage(e) {
-  e.preventDefault();
-  const input=$('serverInput'); const content=input.value.trim();
-  if(!content||!state.currentServer||!state.currentChannel)return;
-  const button=e.currentTarget.querySelector('button'); button.disabled=true;
-  try {
-    const {error}=await supabase.from('server_messages').insert({
-      server_id:state.currentServer.id,
-      channel_id:state.currentChannel.id,
-      sender_id:state.user.id,content
-    });
-    if(error)throw error;
-    input.value='';
-  } catch(err) { setStatus('serverChatStatus','Could not send message: '+err.message); }
-  finally { button.disabled=false; input.focus(); }
-}
-
-async function loadServerMembers() {
-  $('serverWorkspace').innerHTML='<div class="result-list" id="memberResults"></div>';
-  setStatus('workspaceStatus','Loading members…');
-  try {
-    const {data,error}=await supabase.from('server_members')
-      .select('user_id,role').eq('server_id',state.currentServer.id);
-    if(error)throw error;
-    const ids=(data||[]).map(x=>x.user_id);
-    let profiles=[];
-    if(ids.length) {
-      const p=await supabase.from('profiles').select('id,username,display_name').in('id',ids);
-      if(p.error)throw p.error; profiles=p.data||[];
-    }
-    const list=$('memberResults'); list.innerHTML='';
-    for(const m of data||[]) {
-      const p=profiles.find(x=>x.id===m.user_id);
-      const row=document.createElement('div'); row.className='result-item';
-      const label=document.createElement('span');
-      label.textContent=(p?.display_name||p?.username||'User')+' — '+m.role;
-      row.append(label); list.append(row);
-    }
-    if(!data?.length)list.innerHTML='<p class="empty-note">No members found.</p>';
-    setStatus('workspaceStatus','');
-  } catch(err) { setStatus('workspaceStatus','Could not load members: '+err.message); }
-}
-
-function showInviteCode() {
-  const code=state.currentServer?.invite_code;
-  $('serverWorkspace').innerHTML=`
-    <h3>Invite people</h3>
-    <p class="panel-description">Share this invite code with people you want to join.</p>
-    <input class="panel-input" id="inviteDisplay" readonly>
-    <button class="panel-action" id="copyInvite">Copy code</button>`;
-  $('inviteDisplay').value=code||'No invite code available';
-  $('copyInvite').onclick=async()=>{
+async function openChannel(channel) {
+  state.channel = channel.id;
+  document.querySelectorAll('#channelList button').forEach(button => {
+    button.classList.toggle('active', button.textContent === '# ' + channel.name);
+  });
+  $('serverChat').innerHTML = `
+    <h3># ${safe(channel.name)}</h3>
+    <div class="chat-messages" id="serverMessages"></div>
+    <form class="chat-compose" id="serverMessageForm">
+      <input id="serverMessageInput" maxlength="4000" placeholder="Message #${safe(channel.name)}…" required>
+      <button type="submit">Send</button>
+    </form>
+    <div class="status" id="serverMessageStatus"></div>
+  `;
+  $('serverMessageForm').onsubmit = async e => {
+    e.preventDefault();
+    const input = $('serverMessageInput');
+    const content = input.value.trim();
+    if (!content) return;
     try {
-      await navigator.clipboard.writeText(String(code||''));
-      setStatus('workspaceStatus','Invite code copied.');
-    } catch { $('inviteDisplay').select(); setStatus('workspaceStatus','Select and copy the invite code manually.'); }
+      const { error } = await supabase.from('server_messages').insert({
+        channel_id:channel.id,
+        sender_id:state.user.id,
+        content
+      });
+      if (error) throw error;
+      input.value = '';
+      await loadServerMessages(channel.id);
+    } catch (error) {
+      $('serverMessageStatus').textContent = 'Could not send message: ' + error.message;
+    }
   };
+  await loadServerMessages(channel.id);
+  clearInterval(state.refreshTimer);
+  state.refreshTimer = setInterval(() => {
+    if (state.view === 'servers' && state.channel === channel.id) loadServerMessages(channel.id);
+  }, 3000);
 }
 
-/* PROFILE */
+async function loadServerMessages(channelId) {
+  try {
+    const { data, error } = await supabase
+      .from('server_messages')
+      .select('id, sender_id, content, created_at')
+      .eq('channel_id', channelId)
+      .order('created_at', {ascending:true})
+      .limit(200);
+    if (error) throw error;
+
+    const senderIds = [...new Set((data || []).map(m => m.sender_id))];
+    const { data: profiles } = senderIds.length
+      ? await supabase.from('profiles').select('id, username, display_name').in('id', senderIds)
+      : {data:[]};
+    const names = Object.fromEntries((profiles || []).map(p => [p.id, p.display_name || p.username]));
+    const messages = $('serverMessages');
+    if (!messages) return;
+    const atBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 80;
+    messages.innerHTML = '';
+    for (const item of data || []) {
+      const row = document.createElement('div');
+      row.className = 'chat-message';
+      row.innerHTML = `<strong>${safe(names[item.sender_id] || 'User')}</strong><time>${safe(item.created_at ? new Date(item.created_at).toLocaleString() : '')}</time><div>${safe(item.content)}</div>`;
+      messages.append(row);
+    }
+    if (!data?.length) messages.innerHTML = '<p class="empty-note">No messages yet. Start the conversation.</p>';
+    if (atBottom || messages.scrollTop === 0) messages.scrollTop = messages.scrollHeight;
+  } catch (error) {
+    if ($('serverMessageStatus')) $('serverMessageStatus').textContent = 'Could not load messages: ' + error.message;
+  }
+}
 
 function renderProfile() {
-  const p=state.profile||{};
+  const profile = state.profile || {};
   setContent(`
     <h2 id="panelTitle">My Profile</h2>
-    <p class="panel-description">Edit how you appear on ChickenTalk.</p>
-    <form id="profileForm">
-      <div class="field"><label for="profileUsername">USERNAME</label>
-        <input class="panel-input" id="profileUsername" minlength="3" maxlength="24"
-          pattern="[A-Za-z0-9_]{3,24}" required value="${safe(p.username||'')}"></div>
-      <div class="field"><label for="displayName">DISPLAY NAME</label>
-        <input class="panel-input" id="displayName" maxlength="40"
-          value="${safe(p.display_name||'')}"></div>
-      <div class="field"><label for="bio">BIO</label>
-        <textarea class="panel-input" id="bio" maxlength="190" rows="4">${safe(p.bio||'')}</textarea></div>
-      <button class="panel-action" type="submit">Save Profile</button>
-    </form>
-    <div class="status" id="profileStatus"></div>`);
-  $('profileForm').onsubmit=saveProfile;
+    <p class="panel-description">Customize your ChickenTalk identity.</p>
+    <div class="card">
+      <div class="profile-top">
+        <div class="big-avatar" id="profilePreview">${profile.avatar_url ? `<img src="${safe(profile.avatar_url)}" alt="">` : safe((profile.display_name || profile.username || '?').slice(0,1).toUpperCase())}</div>
+        <div><div class="profile-name">${safe(profile.display_name || profile.username || '')}</div><div class="muted">@${safe(profile.username || '')}</div></div>
+      </div>
+      <form id="profileForm">
+        <div class="field"><label for="profileUsername">USERNAME</label><input id="profileUsername" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" value="${safe(profile.username || '')}" required></div>
+        <div class="field"><label for="displayName">DISPLAY NAME</label><input id="displayName" maxlength="40" value="${safe(profile.display_name || '')}"></div>
+        <div class="field"><label for="bio">BIO</label><textarea id="bio" class="panel-input" maxlength="190" rows="4">${safe(profile.bio || '')}</textarea></div>
+        <div class="field"><label for="avatarUrl">AVATAR IMAGE URL</label><input id="avatarUrl" type="url" placeholder="https://example.com/avatar.png" value="${safe(profile.avatar_url || '')}"></div>
+        <button class="panel-action" type="submit">Save Profile</button>
+      </form>
+      <div class="status" id="profileStatus"></div>
+    </div>
+    <div class="card"><h3>Account</h3><p class="muted">${safe(state.user?.email || '')}</p><button class="small-button" id="profileLogout">Log out</button></div>
+  `);
+  $('profileForm').addEventListener('submit', saveProfile);
+  $('profileLogout').onclick = () => $('logoutButton').click();
 }
 
-async function saveProfile(e) {
-  e.preventDefault();
-  const username=$('profileUsername').value.trim().toLowerCase();
-  const display_name=$('displayName').value.trim();
-  const bio=$('bio').value.trim();
-  if(!/^[a-z0-9_]{3,24}$/.test(username)) {
-    setStatus('profileStatus','Username must be 3–24 letters, numbers, or underscores.');return;
+async function saveProfile(event) {
+  event.preventDefault();
+  const username = $('profileUsername').value.trim().toLowerCase();
+  const display_name = $('displayName').value.trim();
+  const bio = $('bio').value.trim();
+  const avatar_url = $('avatarUrl').value.trim() || null;
+
+  if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+    $('profileStatus').textContent = 'Username must be 3–24 letters, numbers, or underscores.';
+    return;
   }
-  setStatus('profileStatus','Saving…');
+  if (avatar_url && !/^https?:\/\//i.test(avatar_url)) {
+    $('profileStatus').textContent = 'Avatar URL must begin with http:// or https://.';
+    return;
+  }
+  $('profileStatus').textContent = 'Saving…';
+
   try {
-    const {data,error}=await supabase.from('profiles')
-      .update({username,display_name,bio})
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({username,display_name,bio,avatar_url})
       .eq('id',state.user.id)
-      .select('id,username,display_name,bio,avatar_url').single();
-    if(error)throw error;
-    state.profile=data;
-    $('sidebarUsername').textContent=display_name||username;
-    $('userAvatar').textContent=(display_name||username).slice(0,1).toUpperCase();
-    setStatus('profileStatus','Profile saved.');
-  } catch(err) { setStatus('profileStatus','Could not save: '+err.message); }
+      .select('id, username, display_name, bio, avatar_url')
+      .single();
+    if (error) throw error;
+    state.profile = data;
+    updateSidebar();
+    $('profileStatus').textContent = 'Profile saved.';
+    renderProfile();
+    $('profileStatus').textContent = 'Profile saved.';
+  } catch (error) {
+    $('profileStatus').textContent = 'Could not save: ' + error.message;
+  }
 }
 
-/* LOG OUT */
+document.querySelectorAll('[data-view]').forEach(button => {
+  button.addEventListener('click', () => {
+    clearInterval(state.refreshTimer);
+    showView(button.dataset.view);
+  });
+});
 
-$('logoutButton').onclick=async()=>{
-  $('logoutButton').disabled=true;
+$('sidebarAdd').addEventListener('click', () => showView('servers'));
+
+$('logoutButton').addEventListener('click', async () => {
+  $('logoutButton').disabled = true;
   try {
-    cleanupRealtime();
-    const {error}=await supabase.auth.signOut();
-    if(error)throw error;
-    state.user=null; state.profile=null; state.currentConversation=null;
-    state.currentServer=null; state.currentChannel=null;
-    $('app').classList.add('hidden'); $('authScreen').classList.remove('hidden');
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    state.user = null;
+    state.profile = null;
+    clearInterval(state.refreshTimer);
+    $('app').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
     switchAuthForm('login');
-  } catch(err) { alert('Could not log out: '+err.message); }
-  finally { $('logoutButton').disabled=false; }
-};
+  } catch (error) {
+    alert('Could not log out: ' + error.message);
+  } finally {
+    $('logoutButton').disabled = false;
+  }
+});
 
-/* DOG SOUND */
-
-$('dogButton').onclick=async()=>{
-  const label=$('dogMessage'); label.textContent='WOOF!';
+function playTone(kind) {
+  const label = $('dogMessage');
+  label.textContent = kind === 'dog' ? 'WOOF!' : 'MEOW!';
   try {
-    const AC=window.AudioContext||window.webkitAudioContext;
-    if(!AC)throw Error('Audio unavailable');
-    const audio=new AC(); await audio.resume(); const now=audio.currentTime;
-    function bark(start,duration,frequency) {
-      const osc=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter();
-      osc.type='sawtooth'; osc.frequency.setValueAtTime(frequency,start);
-      osc.frequency.exponentialRampToValueAtTime(Math.max(65,frequency*.45),start+duration);
-      filter.type='lowpass'; filter.frequency.value=850;
-      gain.gain.setValueAtTime(.0001,start);
-      gain.gain.exponentialRampToValueAtTime(.22,start+.015);
-      gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
-      osc.connect(filter);filter.connect(gain);gain.connect(audio.destination);
-      osc.start(start);osc.stop(start+duration+.02);
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioClass) throw new Error('Audio unavailable');
+    const audio = new AudioClass();
+    const now = audio.currentTime;
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const filter = audio.createBiquadFilter();
+    oscillator.type = 'sawtooth';
+    if (kind === 'dog') {
+      oscillator.frequency.setValueAtTime(230, now);
+      oscillator.frequency.exponentialRampToValueAtTime(100, now + .13);
+      oscillator.frequency.setValueAtTime(195, now + .2);
+      oscillator.frequency.exponentialRampToValueAtTime(90, now + .36);
+    } else {
+      oscillator.frequency.setValueAtTime(650, now);
+      oscillator.frequency.exponentialRampToValueAtTime(420, now + .18);
+      oscillator.frequency.exponentialRampToValueAtTime(780, now + .38);
+      oscillator.frequency.exponentialRampToValueAtTime(520, now + .65);
     }
-    bark(now,.13,230);bark(now+.2,.16,195);
-    setTimeout(()=>{audio.close();label.textContent=''},800);
-  } catch { label.textContent='WOOF! (Audio unavailable)';setTimeout(()=>label.textContent='',1800); }
-};
+    filter.type = 'lowpass';
+    filter.frequency.value = kind === 'dog' ? 850 : 1400;
+    gain.gain.setValueAtTime(.0001, now);
+    gain.gain.exponentialRampToValueAtTime(kind === 'dog' ? .22 : .18, now + .04);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + (kind === 'dog' ? .4 : .7));
+    oscillator.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.start(now);
+    oscillator.stop(now + (kind === 'dog' ? .42 : .72));
+    setTimeout(() => { audio.close(); label.textContent = ''; }, 900);
+  } catch {
+    label.textContent = kind === 'dog' ? 'WOOF! (Audio unavailable)' : 'MEOW! (Audio unavailable)';
+    setTimeout(() => { label.textContent = ''; }, 1800);
+  }
+}
 
-/* CAT SOUND */
-
-$('catButton').onclick=async()=>{
-  const label=$('dogMessage'); label.textContent='MEOW!';
-  try {
-    const AC=window.AudioContext||window.webkitAudioContext;
-    if(!AC)throw Error('Audio unavailable');
-    const audio=new AC();await audio.resume();const now=audio.currentTime;
-    const osc=audio.createOscillator(),gain=audio.createGain(),filter=audio.createBiquadFilter();
-    osc.type='sawtooth';
-    osc.frequency.setValueAtTime(650,now);
-    osc.frequency.exponentialRampToValueAtTime(420,now+.18);
-    osc.frequency.exponentialRampToValueAtTime(780,now+.38);
-    osc.frequency.exponentialRampToValueAtTime(520,now+.65);
-    filter.type='lowpass';filter.frequency.value=1400;
-    gain.gain.setValueAtTime(.0001,now);
-    gain.gain.exponentialRampToValueAtTime(.18,now+.04);
-    gain.gain.setValueAtTime(.13,now+.25);
-    gain.gain.exponentialRampToValueAtTime(.0001,now+.7);
-    osc.connect(filter);filter.connect(gain);gain.connect(audio.destination);
-    osc.start(now);osc.stop(now+.72);
-    setTimeout(()=>{audio.close();label.textContent=''},850);
-  } catch { label.textContent='MEOW! (Audio unavailable)';setTimeout(()=>label.textContent='',1800); }
-};
+$('dogButton').addEventListener('click', () => playTone('dog'));
+$('catButton').addEventListener('click', () => playTone('cat'));
 </script>
 </body>
 </html>
